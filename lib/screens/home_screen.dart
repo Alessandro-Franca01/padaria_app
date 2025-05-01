@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 // Seção 3+12 (Header)
                 Text(
-                  '# 3+12',
+                  'Home Page',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Seção Navigation
                 Text(
-                  '## Navigation v',
+                  'Descubra os principais produtos e ofertas!',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -85,6 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         return GestureDetector(
                           onTap: () {
                             // Ação ao clicar no item
+                            print(carouselItems[index].imagePath);
                             print('Clicou em: ${carouselItems[index].title}');
                           },
                           child: Card(

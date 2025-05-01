@@ -7,15 +7,15 @@ class CarouselItem {
 
 final List<CarouselItem> carouselItems = [
   CarouselItem(
-    imagePath: 'assets/images/paes_artesanais.png',
+    imagePath: 'assets/images/paes_artesanais.jpeg',
     title: 'Pães Artesanais',
   ),
   CarouselItem(
-    imagePath: 'assets/images/bolos_caseiros.png',
+    imagePath: 'assets/images/bolos_caseiros.jpeg',
     title: 'Bolos Caseiros',
   ),
   CarouselItem(
-    imagePath: 'assets/images/salgados_premium.png',
+    imagePath: 'assets/images/salgados_premium.jpeg',
     title: 'Salgados Premium',
   ),
 ];

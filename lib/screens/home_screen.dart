@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:padaria_app/models/category_item.dart';
 
 import '../widgets/CarouselItem.dart';
 
@@ -168,37 +169,80 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Seção Drop by Category
                 Text(
-                  '### Drop by Category',
+                  '### Shop by Categories',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(height: 8),
-                Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '- DEAL* OF THE DAY',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                      child: Text(
+                        'Nossas Categorias',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.brown,
                         ),
-                        SizedBox(height: 8),
-                        CheckboxListTile(
-                          title: Text(''),
-                          value: false,
-                          onChanged: (bool? value) {},
-                          controlAffinity: ListTileControlAffinity.leading,
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                    GridView.builder(
+                      physics: NeverScrollableScrollPhysics(), // Para scroll no pai
+                      shrinkWrap: true,
+                      padding: EdgeInsets.all(16),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, // 2 colunas
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        childAspectRatio: 0.8, // Proporção imagem/título
+                      ),
+                      itemCount: categories.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            // Ação ao clicar
+                            print('Categoria selecionada: ${categories[index].title}');
+                          },
+                          child: Card(
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                                    child: Image.asset(
+                                    categories[index].imagePath,
+                                    height: 120,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Text(
+                                    categories[index].title,
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

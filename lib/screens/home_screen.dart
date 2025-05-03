@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:padaria_app/models/category_item.dart';
+import 'package:padaria_app/models/discount_item.dart';
 
 import '../widgets/CarouselItem.dart';
 
@@ -19,6 +20,48 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     _pageController.jumpToPage(index);
   }
+
+  Widget _buildDiscountItem(DiscountItem discount) {
+  return Expanded(
+    child: GestureDetector(
+      onTap: () {
+        print('Tag selecionada: ${discount.description}');
+      },
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  discount.imagePath,
+                  height: 60,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                discount.description,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -129,17 +172,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Seção 1+12 Settings
                 Text(
-                  '### 1+12 Settings: Remove File N1 Item Sets',
+                  'Nossas promoções que só tem aqui no App',
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '#### Tag Products',
-                  style: TextStyle(
-                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -150,14 +185,44 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '- Condon Park, 24p of Premium Lender & Northern-Seat',
-                          style: TextStyle(fontSize: 16),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                          child: Text(
+                            'Promoções e Descontos',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.brown,
+                            ),
+                          ),
                         ),
-                        SizedBox(height: 8),
-                        Text(
-                          "- JR's Dead Welles (5+18%) Seems optional, so added",
-                          style: TextStyle(fontSize: 16),
+                        SizedBox(
+                          height: 150, // Altura fixa para a lista
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: (DiscountItems.length / 3).ceil(), // 3 itens por "página"
+                            itemBuilder: (context, index) {
+                              return Container(
+                                width: MediaQuery.of(context).size.width * 0.9, // Largura do container
+                                margin: EdgeInsets.only(right: 12),
+                                child: Row(
+                                  children: [
+                                    // Item 1
+                                    _buildDiscountItem(DiscountItems[index * 3]),
+                                    SizedBox(width: 12),
+                                    // Item 2 (se existir)
+                                    if (index * 3 + 1 < DiscountItems.length)
+                                      _buildDiscountItem(DiscountItems[index * 3 + 1]),
+                                    SizedBox(width: 12),
+                                    // Item 3 (se existir)
+                                    if (index * 3 + 2 < DiscountItems.length)
+                                      _buildDiscountItem(DiscountItems[index * 3 + 2]),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -169,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Seção Drop by Category
                 Text(
-                  '### Shop by Categories',
+                  'Escolha uma de nossas categorias especializadas',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -182,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Padding(
                       padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
                       child: Text(
-                        'Nossas Categorias',
+                        'Categorias',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

@@ -3,7 +3,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:padaria_app/models/category_item.dart';
 import 'package:padaria_app/models/discount_item.dart';
 
-import '../widgets/CarouselItem.dart';
+import '../widgets/CarouselCard.dart';
+import '../screens/product_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -126,11 +127,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         viewportFraction: 0.9,
                       ),
                       itemBuilder: (context, index, realIndex) {
+                        final item = carouselItems[index];
                         return GestureDetector(
                           onTap: () {
-                            // Ação ao clicar no item
-                            print(carouselItems[index].imagePath);
-                            print('Clicou em: ${carouselItems[index].title}');
+                            if (item.product != null) {
+                              // Navegar para a tela do produto
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => ProductScreen(product: item.product!),
+                                ),
+                              );
+                            } else if (item.category != null) {
+                              // Navegar para a tela da categoria
+                              print('Categoria selecionada: ${item.category!.title}');
+                            }
                           },
                           child: Card(
                             elevation: 5,
@@ -142,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ClipRRect(
                                   borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                                   child: Image.asset(
-                                    carouselItems[index].imagePath,
+                                    item.imagePath,
                                     height: 120,
                                     width: double.infinity,
                                     fit: BoxFit.cover,
@@ -151,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Padding(
                                   padding: EdgeInsets.all(8),
                                   child: Text(
-                                    carouselItems[index].title,
+                                    item.title,
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -178,7 +188,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 10
+                ),
                 Card(
                   child: Padding(
                     padding: EdgeInsets.all(12),

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:provider/provider.dart';
 import 'package:padaria_app/models/category_item.dart';
 import 'package:padaria_app/models/discount_item.dart';
-
+import '../services/cart_service.dart';
+import '../services/order_service.dart';
 import '../widgets/CarouselItem.dart';
+import 'products_screen.dart';
+import 'cart_screen.dart';
+import 'orders_screen.dart';
+import 'package:padaria_app/models/order.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -22,46 +28,53 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildDiscountItem(DiscountItem discount) {
-  return Expanded(
-    child: GestureDetector(
-      onTap: () {
-        print('Tag selecionada: ${discount.description}');
-      },
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  discount.imagePath,
-                  height: 60,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          print('Tag selecionada: ${discount.description}');
+          // Navegar para produtos com desconto
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProductsScreen(),
+            ),
+          );
+        },
+        child: Card(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    discount.imagePath,
+                    height: 60,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                discount.description,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
+                SizedBox(height: 4),
+                Text(
+                  discount.description,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +82,52 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('Padaria App'),
         backgroundColor: Colors.brown,
+        actions: [
+          // Ícone do carrinho com badge
+          Consumer<CartService>(
+            builder: (context, cartService, child) {
+              return Stack(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.shopping_cart),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CartScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  if (cartService.itemCount > 0)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        constraints: BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          '${cartService.itemCount}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
+        ],
       ),
       body: PageView(
         controller: _pageController,
@@ -78,101 +137,125 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         children: [
-          // Página inicial (substituindo o 'Meus Dados')
+          // Página inicial
           SingleChildScrollView(
             padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Seção 3+12 (Header)
+                // Header
                 Text(
-                  'Home Page',
+                  'Bem-vindo!',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.brown,
                   ),
                 ),
-                SizedBox(height: 16),
-
-                // Seção Navigation
+                SizedBox(height: 8),
                 Text(
                   'Descubra os principais produtos e ofertas!',
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.grey[600],
                   ),
                 ),
-                SizedBox(height: 8),
-                    // Dentro do Column do body (substitua o Card atual):
-                    Column(
-                    children: [
-                    SizedBox(height: 16),
-                    Text(
-                      'Destaques',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.brown,
+                SizedBox(height: 16),
+
+                // Botão Ver Todos os Produtos
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductsScreen(),
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.store),
+                    label: Text('Ver Todos os Produtos'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.brown[700],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    SizedBox(height: 12),
-                    CarouselSlider.builder(
-                      itemCount: carouselItems.length,
-                      options: CarouselOptions(
-                        autoPlay: true,
-                        aspectRatio: 2.0,
-                        enlargeCenterPage: true,
-                        viewportFraction: 0.9,
-                      ),
-                      itemBuilder: (context, index, realIndex) {
-                        return GestureDetector(
-                          onTap: () {
-                            // Ação ao clicar no item
-                            print(carouselItems[index].imagePath);
-                            print('Clicou em: ${carouselItems[index].title}');
-                          },
-                          child: Card(
-                            elevation: 5,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                                  child: Image.asset(
-                                    carouselItems[index].imagePath,
-                                    height: 120,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: Text(
-                                    carouselItems[index].title,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                  ),
+                ),
+
+                SizedBox(height: 24),
+
+                // Seção Destaques
+                Text(
+                  'Destaques',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.brown,
+                  ),
+                ),
+                SizedBox(height: 12),
+                CarouselSlider.builder(
+                  itemCount: carouselItems.length,
+                  options: CarouselOptions(
+                    autoPlay: true,
+                    aspectRatio: 2.0,
+                    enlargeCenterPage: true,
+                    viewportFraction: 0.9,
+                  ),
+                  itemBuilder: (context, index, realIndex) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductsScreen(),
                           ),
                         );
                       },
-                    ),
-                  ],
+                      child: Card(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                              child: Image.asset(
+                                carouselItems[index].imagePath,
+                                height: 120,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Text(
+                                carouselItems[index].title,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                SizedBox(height: 16),
+
+                SizedBox(height: 24),
                 Divider(),
                 SizedBox(height: 16),
 
-                // Seção 1+12 Settings
+                // Seção Promoções
                 Text(
-                  'Nossas promoções que só tem aqui no App',
+                  'Promoções Exclusivas do App',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -197,25 +280,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         SizedBox(
-                          height: 150, // Altura fixa para a lista
+                          height: 150,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             padding: EdgeInsets.symmetric(horizontal: 16),
-                            itemCount: (DiscountItems.length / 3).ceil(), // 3 itens por "página"
+                            itemCount: (DiscountItems.length / 3).ceil(),
                             itemBuilder: (context, index) {
                               return Container(
-                                width: MediaQuery.of(context).size.width * 0.9, // Largura do container
+                                width: MediaQuery.of(context).size.width * 0.9,
                                 margin: EdgeInsets.only(right: 12),
                                 child: Row(
                                   children: [
-                                    // Item 1
                                     _buildDiscountItem(DiscountItems[index * 3]),
                                     SizedBox(width: 12),
-                                    // Item 2 (se existir)
                                     if (index * 3 + 1 < DiscountItems.length)
                                       _buildDiscountItem(DiscountItems[index * 3 + 1]),
                                     SizedBox(width: 12),
-                                    // Item 3 (se existir)
                                     if (index * 3 + 2 < DiscountItems.length)
                                       _buildDiscountItem(DiscountItems[index * 3 + 2]),
                                   ],
@@ -228,13 +308,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
+
+                SizedBox(height: 24),
                 Divider(),
                 SizedBox(height: 16),
 
-                // Seção Drop by Category
+                // Seção Categorias
                 Text(
-                  'Escolha uma de nossas categorias especializadas',
+                  'Nossas Especialidades',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -256,21 +337,27 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     GridView.builder(
-                      physics: NeverScrollableScrollPhysics(), // Para scroll no pai
+                      physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       padding: EdgeInsets.all(16),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // 2 colunas
+                        crossAxisCount: 2,
                         crossAxisSpacing: 12,
                         mainAxisSpacing: 12,
-                        childAspectRatio: 0.8, // Proporção imagem/título
+                        childAspectRatio: 0.8,
                       ),
                       itemCount: categories.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
-                            // Ação ao clicar
-                            print('Categoria selecionada: ${categories[index].title}');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductsScreen(
+                                  category: categories[index].title,
+                                ),
+                              ),
+                            );
                           },
                           child: Card(
                             elevation: 3,
@@ -283,12 +370,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                                     child: Image.asset(
-                                    categories[index].imagePath,
-                                    height: 120,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
+                                      categories[index].imagePath,
+                                      height: 120,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                ),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(8),
@@ -312,8 +399,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          Center(child: Text('Faturas')),
-          Center(child: Text('Carrinho de Compras')),
+
+          // Página de Pedidos/Faturas
+          OrdersScreen(),
+
+          // Página do Carrinho
+          CartScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -321,15 +412,86 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: _onItemTapped,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home), // Mudei para ícone de home
+            icon: Icon(Icons.home),
             label: 'Início',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.receipt),
-            label: 'Faturas',
+            icon: Consumer<OrderService>(
+              builder: (context, orderService, child) {
+                final activeOrders = orderService.orders.where((order) => [
+                  OrderStatus.pending,
+                  OrderStatus.confirmed,
+                  OrderStatus.preparing,
+                  OrderStatus.delivery,
+                ].contains(order.status)).length;
+
+                return Stack(
+                  children: [
+                    Icon(Icons.receipt_long),
+                    if (activeOrders > 0)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(1),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          constraints: BoxConstraints(
+                            minWidth: 12,
+                            minHeight: 12,
+                          ),
+                          child: Text(
+                            '$activeOrders',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+            label: 'Pedidos',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
+            icon: Consumer<CartService>(
+              builder: (context, cartService, child) {
+                return Stack(
+                  children: [
+                    Icon(Icons.shopping_cart),
+                    if (cartService.itemCount > 0)
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(1),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          constraints: BoxConstraints(
+                            minWidth: 12,
+                            minHeight: 12,
+                          ),
+                          child: Text(
+                            '${cartService.itemCount}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
             label: 'Carrinho',
           ),
         ],

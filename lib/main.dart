@@ -5,6 +5,7 @@ import 'services/auth_service.dart';
 import 'services/cart_service.dart';
 import 'services/product_service.dart';
 import 'services/loyalty_service.dart';
+import 'services/order_service.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,12 +20,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CartService()),
         ChangeNotifierProvider(create: (_) => ProductService()),
         ChangeNotifierProvider(create: (_) => LoyaltyService()),
+        ChangeNotifierProvider(create: (_) => OrderService()),
       ],
       child: MaterialApp(
         title: 'Padaria App',
         theme: ThemeData(
           primarySwatch: Colors.brown,
-          colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.orangeAccent),
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.brown).copyWith(
+            secondary: Colors.orangeAccent,
+          ),
           fontFamily: 'Roboto',
           textTheme: TextTheme(
             displayLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.brown),
@@ -32,14 +36,8 @@ class MyApp extends StatelessWidget {
             bodyLarge: TextStyle(fontSize: 16.0, color: Colors.black87),
             bodyMedium: TextStyle(fontSize: 14.0, color: Colors.black54),
           ),
-          buttonTheme: ButtonThemeData(
-            buttonColor: Colors.brown,
-            textTheme: ButtonTextTheme.primary,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          ),
         ),
-        home: SplashScreen(),
-        debugShowCheckedModeBanner: false,
+        home: SplashScreen(), // Set SplashScreen as the initial route
       ),
     );
   }

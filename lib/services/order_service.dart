@@ -39,7 +39,7 @@ class OrderService with ChangeNotifier {
               name: itemData['productName'] ?? 'Produto',
               description: itemData['productDescription'] ?? '',
               price: itemData['productPrice']?.toDouble() ?? 0.0,
-              imageUrl: itemData['productImage'] ?? 'assets/images/placeholder.jpg',
+              imageUrl: _normalizeImagePath(itemData['productImage']),
               category: itemData['productCategory'] ?? 'Geral',
             );
             
@@ -107,7 +107,7 @@ class OrderService with ChangeNotifier {
       name: 'Pão Francês',
       description: 'Pão francês tradicional, fresco e crocante.',
       price: 1.50,
-      imageUrl: 'assets/images/pao_frances.jpg',
+      imageUrl: _normalizeImagePath('assets/images/paes_artesanais.jpeg'),
       category: 'Pães',
     );
     
@@ -116,7 +116,7 @@ class OrderService with ChangeNotifier {
       name: 'Pão de Queijo',
       description: 'Pão de queijo mineiro, quentinho e macio.',
       price: 2.50,
-      imageUrl: 'assets/images/pao_queijo.jpg',
+      imageUrl: _normalizeImagePath('assets/images/salgados_premium.jpeg'),
       category: 'Pães',
     );
     
@@ -125,7 +125,7 @@ class OrderService with ChangeNotifier {
       name: 'Bolo de Chocolate',
       description: 'Bolo de chocolate com cobertura de brigadeiro.',
       price: 30.00,
-      imageUrl: 'assets/images/bolo_chocolate.jpg',
+      imageUrl: _normalizeImagePath('assets/images/bolos_caseiros.jpeg'),
       category: 'Bolos',
     );
     
@@ -176,6 +176,31 @@ class OrderService with ChangeNotifier {
     ];
     
     _saveOrders();
+  }
+
+  String _normalizeImagePath(String? path) {
+    final fallback = 'assets/images/paes_artesanais.jpeg';
+    if (path == null || path.isEmpty) return fallback;
+    switch (path) {
+      case 'assets/images/pao_frances.jpg':
+        return 'assets/images/paes_artesanais.jpeg';
+      case 'assets/images/pao_queijo.jpg':
+        return 'assets/images/salgados_premium.jpeg';
+      case 'assets/images/bolo_chocolate.jpg':
+        return 'assets/images/bolos_caseiros.jpeg';
+      case 'assets/images/croissant.jpg':
+        return 'assets/images/salgados_premium.jpeg';
+      case 'assets/images/cafe.jpg':
+        return 'assets/images/categories/categoria_cafes.webp';
+      case 'assets/images/suco_laranja.jpg':
+        return 'assets/images/categories/categoria_doces.jpeg';
+      case 'assets/images/sanduiche.jpg':
+        return 'assets/images/salgados_premium.jpeg';
+      case 'assets/images/coxinha.jpg':
+        return 'assets/images/salgados_premium.jpeg';
+      default:
+        return path;
+    }
   }
   
   Future<void> addOrder(Order order) async {

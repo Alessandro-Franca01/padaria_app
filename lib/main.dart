@@ -6,6 +6,7 @@ import 'services/cart_service.dart';
 import 'services/product_service.dart';
 import 'services/loyalty_service.dart';
 import 'services/order_service.dart';
+import 'services/chat_service.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProductService()),
         ChangeNotifierProvider(create: (_) => LoyaltyService()),
         ChangeNotifierProvider(create: (_) => OrderService()),
+        ChangeNotifierProvider(create: (_) => ChatService()),
       ],
       child: MaterialApp(
         title: 'Padaria App',

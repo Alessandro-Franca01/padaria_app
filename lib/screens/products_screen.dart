@@ -22,6 +22,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
   void initState() {
     super.initState();
     selectedCategory = widget.category;
+    // Fetch products when the screen initializes
+    //Provider.of<ProductService>(context, listen: false).fetchProducts();
   }
 
   @override
@@ -114,7 +116,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: 0.75,
+                    childAspectRatio: 0.7,
                   ),
                   itemCount: filteredProducts.length,
                   itemBuilder: (context, index) {
@@ -176,63 +178,69 @@ class ProductCard extends StatelessWidget {
             ),
             Expanded(
               flex: 2,
-              child: Padding(
-                padding: EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      product.name,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+              child: Flexible(
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      product.description,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
+                      SizedBox(height: 4),
+                      Text(
+                        product.description,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'R\$ ${product.price.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.brown[700],
-                            fontSize: 16,
+                      Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'R\$ ${product.price.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.brown[700],
+                                fontSize: 16,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                        ),
-                        Consumer<CartService>(
-                          builder: (context, cartService, child) {
-                            return IconButton(
-                              icon: Icon(Icons.add_shopping_cart),
-                              onPressed: product.isAvailable ? () {
-                                cartService.addItem(product);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('${product.name} adicionado ao carrinho'),
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: Colors.green,
-                                  ),
-                                );
-                              } : null,
-                              color: Colors.brown,
-                              iconSize: 20,
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                          Consumer<CartService>(
+                            builder: (context, cartService, child) {
+                              return IconButton(
+                                icon: Icon(Icons.add_shopping_cart),
+                                onPressed: product.isAvailable ? () {
+                                  cartService.addItem(product);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('${product.name} adicionado ao carrinho'),
+                                      duration: Duration(seconds: 2),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                } : null,
+                                color: Colors.brown,
+                                iconSize: 10,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

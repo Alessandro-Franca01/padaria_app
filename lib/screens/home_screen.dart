@@ -10,6 +10,7 @@ import 'products_screen.dart';
 import 'cart_screen.dart';
 import 'orders_screen.dart';
 import 'package:padaria_app/models/order.dart';
+import 'chat_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -83,6 +84,17 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text('Padaria App'),
         backgroundColor: Colors.brown,
         actions: [
+          IconButton(
+            icon: Icon(Icons.chat),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatScreen(),
+                ),
+              );
+            },
+          ),
           // Ícone do carrinho com badge
           Consumer<CartService>(
             builder: (context, cartService, child) {

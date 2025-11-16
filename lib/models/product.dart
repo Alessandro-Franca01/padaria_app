@@ -20,15 +20,25 @@ class Product {
   });
   
   factory Product.fromJson(Map<String, dynamic> json) {
+    final idVal = json['id']?.toString();
+    final priceVal = (json['price'] ?? json['price_value'] ?? json['total_price']) is String
+        ? double.tryParse((json['price'] ?? json['price_value'] ?? json['total_price'])) ?? 0.0
+        : ((json['price'] ?? json['price_value'] ?? json['total_price'])?.toDouble() ?? 0.0);
+    final imageVal = json['imageUrl'] ?? json['image_url'] ?? '';
+    final categoryVal = json['category'] is Map
+        ? json['category']['name']
+        : (json['category'] ?? json['category_name'] ?? 'Geral');
+    final isAvailableVal = json['isAvailable'] ?? json['is_available'] ?? true;
+    final isFeaturedVal = json['isFeatured'] ?? json['is_featured'] ?? false;
     return Product(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      price: json['price'].toDouble(),
-      imageUrl: json['imageUrl'],
-      category: json['category'],
-      isAvailable: json['isAvailable'] ?? true,
-      isFeatured: json['isFeatured'] ?? false,
+      id: idVal ?? '',
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      price: priceVal,
+      imageUrl: imageVal,
+      category: categoryVal,
+      isAvailable: isAvailableVal,
+      isFeatured: isFeaturedVal,
     );
   }
   

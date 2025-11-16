@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'laravel_api_service.dart';
 
 import '../models/order.dart';
 import '../models/cart_item.dart';
@@ -56,7 +57,6 @@ class OrderService with ChangeNotifier {
         // Ordenar por data mais recente
         _orders.sort((a, b) => b.orderDate.compareTo(a.orderDate));
       } else {
-        // Adicionar alguns pedidos de exemplo
         _createSampleOrders();
       }
     } catch (e) {
@@ -64,6 +64,31 @@ class OrderService with ChangeNotifier {
       _createSampleOrders();
     }
     
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> refreshOrdersForUser(String userId) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final data = await LaravelApiService.getUserOrders(int.tryParse(userId) ?? 0);
+      final List<Order> fetched = [];
+      for (final o in data) {
+        final List<CartItem> items = [];
+        final orderItems = o['order_items'] ?? [];
+        for (final item in orderItems) {
+          final productJson = item['product'] ?? {};
+          final product = Product.fromJson(productJson);
+          items.add(CartItem.fromJson(item, product));
+        }
+        fetched.add(Order.fromJson(o, items));
+      }
+      fetched.sort((a, b) => b.orderDate.compareTo(a.orderDate));
+      _orders = fetched;
+    } catch (e) {
+      print('Erro ao buscar pedidos: $e');
+    }
     _isLoading = false;
     notifyListeners();
   }
@@ -204,9 +229,45 @@ class OrderService with ChangeNotifier {
   }
   
   Future<void> addOrder(Order order) async {
-    _orders.insert(0, order); // Adicionar no início da lista
+    _orders.insert(0, order);
     await _saveOrders();
     notifyListeners();
+  }
+
+  Future<Order?> submitOrder(Order order) async {
+    try {
+      final itemsData = order.items.map((i) => {
+            'product_id': int.tryParse(i.product.id) ?? 0,
+            'quantity': i.quantity,
+            'price': i.product.price,
+          }).toList();
+      final payload = {
+        'user_id': int.tryParse(order.userId) ?? 0,
+        'total_amount': order.total,
+        'payment_method': order.paymentMethod,
+        'delivery_address': order.deliveryAddress,
+        'delivery_time': order.deliveryDate != null
+            ? '${order.deliveryDate!.hour.toString().padLeft(2, '0')}:${order.deliveryDate!.minute.toString().padLeft(2, '0')}'
+            : null,
+        'notes': null,
+        'items': itemsData,
+      };
+      final created = await LaravelApiService.createOrder(payload);
+      final List<CartItem> items = [];
+      final orderItems = created['order_items'] ?? [];
+      for (final item in orderItems) {
+        final productJson = item['product'] ?? {};
+        final product = Product.fromJson(productJson);
+        items.add(CartItem.fromJson(item, product));
+      }
+      final newOrder = Order.fromJson(created, items);
+      _orders.insert(0, newOrder);
+      notifyListeners();
+      return newOrder;
+    } catch (e) {
+      print('Erro ao enviar pedido: $e');
+      return null;
+    }
   }
   
   Future<void> updateOrderStatus(String orderId, OrderStatus newStatus) async {

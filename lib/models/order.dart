@@ -55,16 +55,54 @@ class Order {
   }
   
   factory Order.fromJson(Map<String, dynamic> json, List<CartItem> orderItems) {
+    final idVal = json['id']?.toString();
+    final userIdVal = json['userId']?.toString() ?? json['user_id']?.toString() ?? '';
+    final totalVal = (json['total'] ?? json['total_amount']) is String
+        ? double.tryParse((json['total'] ?? json['total_amount'])) ?? 0.0
+        : ((json['total'] ?? json['total_amount'])?.toDouble() ?? 0.0);
+    final orderDateStr = json['orderDate'] ?? json['created_at'];
+    final deliveryAddressVal = json['deliveryAddress'] ?? json['delivery_address'] ?? '';
+    final paymentMethodVal = json['paymentMethod'] ?? json['payment_method'];
+    final statusVal = json['status'];
+    OrderStatus statusEnum;
+    if (statusVal is String) {
+      switch (statusVal) {
+        case 'pending':
+          statusEnum = OrderStatus.pending;
+          break;
+        case 'confirmed':
+          statusEnum = OrderStatus.confirmed;
+          break;
+        case 'preparing':
+          statusEnum = OrderStatus.preparing;
+          break;
+        case 'delivery':
+          statusEnum = OrderStatus.delivery;
+          break;
+        case 'delivered':
+          statusEnum = OrderStatus.completed;
+          break;
+        case 'cancelled':
+          statusEnum = OrderStatus.cancelled;
+          break;
+        default:
+          statusEnum = OrderStatus.pending;
+      }
+    } else if (statusVal is int) {
+      statusEnum = OrderStatus.values[(statusVal)];
+    } else {
+      statusEnum = OrderStatus.pending;
+    }
     return Order(
-      id: json['id'],
-      userId: json['userId'],
+      id: idVal ?? '',
+      userId: userIdVal,
       items: orderItems,
-      total: json['total'].toDouble(),
-      orderDate: DateTime.parse(json['orderDate']),
+      total: totalVal,
+      orderDate: orderDateStr != null ? DateTime.parse(orderDateStr) : DateTime.now(),
       deliveryDate: json['deliveryDate'] != null ? DateTime.parse(json['deliveryDate']) : null,
-      deliveryAddress: json['deliveryAddress'],
-      status: OrderStatus.values[json['status'] ?? 0],
-      paymentMethod: json['paymentMethod'],
+      deliveryAddress: deliveryAddressVal,
+      status: statusEnum,
+      paymentMethod: paymentMethodVal,
       isRecurring: json['isRecurring'] ?? false,
       recurringDays: json['recurringDays'] != null 
           ? List<String>.from(json['recurringDays']) 

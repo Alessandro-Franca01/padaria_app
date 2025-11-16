@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/order.dart';
 import '../services/order_service.dart';
-import '../services/auth_service.dart';
+import '../services/auth_laravel_service.dart';
 import 'order_detail_screen.dart';
 
 class OrdersScreen extends StatefulWidget {
@@ -46,7 +46,7 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
           ],
         ),
       ),
-      body: Consumer2<OrderService, AuthService>(
+      body: Consumer2<OrderService, AuthLaravelService>(
         builder: (context, orderService, authService, child) {
           if (!authService.isAuthenticated) {
             return _buildNotAuthenticated();
@@ -121,7 +121,12 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
 
     return RefreshIndicator(
       onRefresh: () async {
-        await orderService.refreshOrders();
+        final auth = Provider.of<AuthLaravelService>(context, listen: false);
+        if (auth.currentUser != null) {
+          await orderService.refreshOrdersForUser(auth.currentUser!.id);
+        } else {
+          await orderService.refreshOrders();
+        }
       },
       child: ListView.builder(
         padding: EdgeInsets.all(16),

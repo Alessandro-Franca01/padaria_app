@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../services/subscription_service.dart';
 import '../services/product_service.dart';
 import '../models/product.dart';
+import '../services/auth_laravel_service.dart';
 
 class PlansScreen extends StatefulWidget {
   @override
@@ -20,9 +21,11 @@ class _PlansScreenState extends State<PlansScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final productService = context.read<ProductService>();
       final subscription = context.read<SubscriptionService>();
-      subscription.loadFromStorage(productService).then((_) {
+      final auth = context.read<AuthLaravelService>();
+      final userId = auth.currentUser?.id ?? '0';
+      subscription.loadFromApi(userId, productService).then((_) {
         if (subscription.plan == null) {
-          subscription.initialize('user-1');
+          subscription.initialize(userId);
         }
         _addressController.text = subscription.address;
       });
@@ -210,6 +213,27 @@ class _PlansScreenState extends State<PlansScreen> {
                         Text('Horário: ${sub.time.isEmpty ? '-' : sub.time}'),
                         SizedBox(height: 4),
                         Text('Endereço: ${sub.address.isEmpty ? '-' : sub.address}'),
+                        SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton.icon(
+                            onPressed: sub.isSubmitting
+                                ? null
+                                : () async {
+                                    final ok = await context.read<SubscriptionService>().submitToApi();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(ok ? 'Plano salvo com sucesso' : 'Falha ao salvar plano'),
+                                        backgroundColor: ok ? Colors.green : Colors.red,
+                                      ),
+                                    );
+                                  },
+                            icon: Icon(Icons.save),
+                            label: Text('Salvar Plano'),
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.brown[700]),
+                          ),
+                        ),
                       ],
                     ),
                   ),

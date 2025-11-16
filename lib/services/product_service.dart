@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/product.dart';
+import 'laravel_api_service.dart';
 
 class ProductService with ChangeNotifier {
   List<Product> _products = [];
@@ -19,94 +20,20 @@ class ProductService with ChangeNotifier {
     return categoriesSet.toList()..sort();
   }
   
-  // Inicializa com dados de exemplo
   ProductService() {
     _loadProducts();
   }
   
-  // Simulação de carregamento de produtos
   Future<void> _loadProducts() async {
     _isLoading = true;
     notifyListeners();
     
-    // Simula chamada de API
-    await Future.delayed(Duration(seconds: 1));
-    
-    // Dados simulados de produtos
-    _products = [
-      Product(
-        id: '1',
-        name: 'Pão Francês',
-        description: 'Pão francês tradicional, fresco e crocante.',
-        price: 1.50,
-        imageUrl: 'assets/images/paes_artesanais.jpeg',
-        category: 'Pães',
-        isFeatured: true,
-      ),
-      Product(
-        id: '2',
-        name: 'Pão de Queijo',
-        description: 'Pão de queijo mineiro, quentinho e macio.',
-        price: 2.50,
-        imageUrl: 'assets/images/salgados_premium.jpeg',
-        category: 'Pães',
-        isFeatured: true,
-      ),
-      Product(
-        id: '3',
-        name: 'Croissant',
-        description: 'Croissant amanteigado e folhado.',
-        price: 5.00,
-        imageUrl: 'assets/images/salgados_premium.jpeg',
-        category: 'Doces',
-        isFeatured: false,
-      ),
-      Product(
-        id: '4',
-        name: 'Bolo de Chocolate',
-        description: 'Bolo de chocolate com cobertura de brigadeiro.',
-        price: 30.00,
-        imageUrl: 'assets/images/bolos_caseiros.jpeg',
-        category: 'Bolos',
-        isFeatured: true,
-      ),
-      Product(
-        id: '5',
-        name: 'Café Espresso',
-        description: 'Café espresso forte e aromático.',
-        price: 4.50,
-        imageUrl: 'assets/images/categories/categoria_cafes.webp',
-        category: 'Bebidas',
-        isFeatured: false,
-      ),
-      Product(
-        id: '6',
-        name: 'Suco de Laranja',
-        description: 'Suco de laranja natural, feito na hora.',
-        price: 6.00,
-        imageUrl: 'assets/images/categories/categoria_doces.jpeg',
-        category: 'Bebidas',
-        isFeatured: false,
-      ),
-      Product(
-        id: '7',
-        name: 'Sanduíche Natural',
-        description: 'Sanduíche natural com frango, cenoura, milho e maionese.',
-        price: 8.50,
-        imageUrl: 'assets/images/salgados_premium.jpeg',
-        category: 'Lanches',
-        isFeatured: true,
-      ),
-      Product(
-        id: '8',
-        name: 'Coxinha',
-        description: 'Coxinha de frango cremosa e crocante.',
-        price: 4.00,
-        imageUrl: 'assets/images/salgados_premium.jpeg',
-        category: 'Salgados',
-        isFeatured: false,
-      ),
-    ];
+    try {
+      final data = await LaravelApiService.getProducts();
+      _products = data.map<Product>((json) => Product.fromJson(json)).toList();
+    } catch (e) {
+      _products = [];
+    }
     
     _isLoading = false;
     notifyListeners();

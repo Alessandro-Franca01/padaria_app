@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/cart_item.dart';
 import '../services/cart_service.dart';
-import '../services/auth_service.dart';
+import '../services/auth_laravel_service.dart';
 import 'checkout_screen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -180,7 +180,7 @@ class _CartScreenState extends State<CartScreen> {
           SizedBox(
             width: double.infinity,
             height: 50,
-            child: Consumer<AuthService>(
+            child: Consumer<AuthLaravelService>(
               builder: (context, authService, child) {
                 return ElevatedButton.icon(
                   onPressed: () {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 
-import '../services/auth_service.dart';
+import '../services/auth_laravel_service.dart';
 import '../services/product_service.dart';
 import '../services/cart_service.dart';
 import 'home_screen.dart';
@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(Duration(seconds: 2));
     
     // Tenta fazer login automático com dados salvos
-    final authService = Provider.of<AuthService>(context, listen: false);
+    final authService = Provider.of<AuthLaravelService>(context, listen: false);
     final productService = Provider.of<ProductService>(context, listen: false);
     final cartService = Provider.of<CartService>(context, listen: false);
     

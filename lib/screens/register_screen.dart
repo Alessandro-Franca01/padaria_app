@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../services/auth_service.dart';
+import '../services/auth_laravel_service.dart';
 import 'home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -44,7 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
 
-    final authService = Provider.of<AuthService>(context, listen: false);
+    final authService = Provider.of<AuthLaravelService>(context, listen: false);
 
     final success = await authService.register(
       _nameController.text.trim(),
@@ -70,7 +70,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
+    final authService = Provider.of<AuthLaravelService>(context);
     final isLoading = authService.isLoading;
 
     return Scaffold(

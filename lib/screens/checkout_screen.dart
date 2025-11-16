@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/order.dart';
+import '../services/order_service.dart';
 import '../services/cart_service.dart';
-import '../services/auth_service.dart';
+import '../services/auth_laravel_service.dart';
 import '../services/loyalty_service.dart';
 import 'order_confirmation_screen.dart';
 
@@ -50,7 +51,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   void initState() {
     super.initState();
-    final authService = Provider.of<AuthService>(context, listen: false);
+    final authService = Provider.of<AuthLaravelService>(context, listen: false);
     if (authService.currentUser != null) {
       _deliveryAddressController.text = authService.currentUser!.address;
     }
@@ -63,7 +64,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         title: Text('Finalizar Compra'),
         backgroundColor: Colors.brown,
       ),
-      body: Consumer3<CartService, AuthService, LoyaltyService>(
+      body: Consumer3<CartService, AuthLaravelService, LoyaltyService>(
         builder: (context, cartService, authService, loyaltyService, child) {
           return SingleChildScrollView(
             padding: EdgeInsets.all(16),
@@ -174,7 +175,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Widget _buildDeliveryAddress(AuthService authService) {
+  Widget _buildDeliveryAddress(AuthLaravelService authService) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -473,7 +474,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Widget _buildFinishButton(CartService cartService, AuthService authService, LoyaltyService loyaltyService) {
+  Widget _buildFinishButton(CartService cartService, AuthLaravelService authService, LoyaltyService loyaltyService) {
     return SizedBox(
       width: double.infinity,
       height: 50,
@@ -542,7 +543,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
   }
 
-  Future<void> _finishOrder(CartService cartService, AuthService authService, LoyaltyService loyaltyService) async {
+  Future<void> _finishOrder(CartService cartService, AuthLaravelService authService, LoyaltyService loyaltyService) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -567,7 +568,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return;
     }
 
-    // Criar o pedido
     final deliveryDateTime = DateTime(
       _selectedDeliveryDate!.year,
       _selectedDeliveryDate!.month,
@@ -589,6 +589,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       recurringDays: _isRecurring ? _selectedRecurringDays : null,
     );
 
+    final orderService = Provider.of<OrderService>(context, listen: false);
+    final created = await orderService.submitOrder(order);
+
     // Adicionar pontos de fidelidade
     final pointsEarned = (cartService.totalAmount / 5).round();
     loyaltyService.addPoints(pointsEarned);
@@ -601,7 +604,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => OrderConfirmationScreen(
-          order: order,
+          order: created ?? order,
           pointsEarned: pointsEarned,
         ),
       ),

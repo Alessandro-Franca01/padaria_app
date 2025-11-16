@@ -178,69 +178,67 @@ class ProductCard extends StatelessWidget {
             ),
             Expanded(
               flex: 2,
-              child: Flexible(
-                child: Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        product.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
                       ),
-                      SizedBox(height: 4),
-                      Text(
-                        product.description,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      product.description,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
                       ),
-                      Spacer(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'R\$ ${product.price.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.brown[700],
-                                fontSize: 16,
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'R\$ ${product.price.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.brown[700],
+                              fontSize: 16,
                             ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          Consumer<CartService>(
-                            builder: (context, cartService, child) {
-                              return IconButton(
-                                icon: Icon(Icons.add_shopping_cart),
-                                onPressed: product.isAvailable ? () {
-                                  cartService.addItem(product);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('${product.name} adicionado ao carrinho'),
-                                      duration: Duration(seconds: 2),
-                                      backgroundColor: Colors.green,
-                                    ),
-                                  );
-                                } : null,
-                                color: Colors.brown,
-                                iconSize: 10,
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                        Consumer<CartService>(
+                          builder: (context, cartService, child) {
+                            return IconButton(
+                              icon: Icon(Icons.add_shopping_cart),
+                              onPressed: product.isAvailable ? () {
+                                cartService.addItem(product);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('${product.name} adicionado ao carrinho'),
+                                    duration: Duration(seconds: 2),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              } : null,
+                              color: Colors.brown,
+                              iconSize: 10,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),

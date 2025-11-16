@@ -5,12 +5,13 @@ import 'package:padaria_app/models/category_item.dart';
 import 'package:padaria_app/models/discount_item.dart';
 import '../services/cart_service.dart';
 import '../services/order_service.dart';
-import '../widgets/CarouselItem.dart';
+import '../widgets/carousel_item.dart';
 import 'products_screen.dart';
 import 'cart_screen.dart';
 import 'orders_screen.dart';
 import 'package:padaria_app/models/order.dart';
 import 'chat_screen.dart';
+import 'plans_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -412,6 +413,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
+          PlansScreen(),
+
           // Página de Pedidos/Faturas
           OrdersScreen(),
 
@@ -422,10 +425,18 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        backgroundColor: Colors.brown,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
+        type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Início',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event_available),
+            label: 'Planos',
           ),
           BottomNavigationBarItem(
             icon: Consumer<OrderService>(
@@ -507,7 +518,7 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Carrinho',
           ),
         ],
-        selectedItemColor: Colors.brown,
+        //selectedItemColor: Colors.white,
       ),
     );
   }

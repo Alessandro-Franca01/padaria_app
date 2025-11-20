@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../services/subscription_service.dart';
 import '../services/product_service.dart';
+import '../services/auth_service.dart';
 import '../models/product.dart';
 
 class PlansScreen extends StatefulWidget {
@@ -29,6 +30,12 @@ class _PlansScreenState extends State<PlansScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    _addressController.dispose();
+    super.dispose();
+  }
+
   Future<void> _pickTime() async {
     final currentTime = TimeOfDay.now();
     final picked = await showTimePicker(context: context, initialTime: currentTime);
@@ -37,6 +44,31 @@ class _PlansScreenState extends State<PlansScreen> {
       final String mm = picked.minute.toString().padLeft(2, '0');
       context.read<SubscriptionService>().setTime('$hh:$mm');
     }
+  }
+
+  void _useUserAddress() {
+    final authService = context.read<AuthService>();
+    final user = authService.currentUser;
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Faça login para usar o endereço salvo.')),
+      );
+      return;
+    }
+
+    if (user.address.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Nenhum endereço salvo no perfil.')),
+      );
+      return;
+    }
+
+    _addressController.text = user.address;
+    context.read<SubscriptionService>().setAddress(user.address);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Endereço do perfil aplicado ao plano.')),
+    );
   }
 
   Widget _buildProductItem(Product product) {
@@ -167,13 +199,26 @@ class _PlansScreenState extends State<PlansScreen> {
                     SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: _pickTime,
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.brown),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.brown[700]),
                       child: Text('Escolher'),
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 8),
                 Text('Endereço de entrega'),
+                SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.center,
+                  child: ElevatedButton.icon(
+                    onPressed: _useUserAddress,
+                    icon: Icon(Icons.person_pin_circle),
+                    label: Text('Usar endereço do perfil'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.brown[600],
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                  ),
+                ),
                 SizedBox(height: 8),
                 TextField(
                   controller: _addressController,
@@ -187,10 +232,12 @@ class _PlansScreenState extends State<PlansScreen> {
                 Row(
                   children: [
                     Switch(
-                      value: sub.active,
-                      onChanged: (v) => context.read<SubscriptionService>().setActive(v),
-                      activeColor: Colors.brown,
-                    ),
+                          value: sub.active,
+                          onChanged: (v) => context.read<SubscriptionService>().setActive(v),
+                          activeColor: Colors.brown,
+                         inactiveThumbColor: Colors.brown[200],
+                         inactiveTrackColor: Colors.brown[100],
+                        ),
                     Text('Plano ativo'),
                   ],
                 ),

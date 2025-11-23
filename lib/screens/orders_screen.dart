@@ -33,7 +33,9 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
         backgroundColor: Colors.brown,
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.white,
+          indicatorColor: Colors.brown[200],
+          labelColor: Colors.brown[50],
+          unselectedLabelColor: Colors.white70,
           tabs: [
             Tab(
               icon: Icon(Icons.pending_actions),

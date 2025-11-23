@@ -12,6 +12,7 @@ import 'orders_screen.dart';
 import 'package:padaria_app/models/order.dart';
 import 'chat_screen.dart';
 import 'plans_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -140,6 +141,17 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(),
+                ),
+              );
+            },
+          ),
         ],
       ),
       body: PageView(
@@ -191,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icon(Icons.store),
                     label: Text('Ver Todos os Produtos'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.brown[700],
+                      backgroundColor: Colors.white30,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),

@@ -485,7 +485,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           style: TextStyle(fontSize: 18),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.brown[700],
+          backgroundColor: Colors.white30,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),

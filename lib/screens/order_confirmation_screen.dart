@@ -201,10 +201,10 @@ class OrderConfirmationScreen extends StatelessWidget {
                           ),
                         );
                       },
-                      icon: Icon(Icons.receipt_long),
+                      icon: Icon(Icons.receipt_long, color: Colors.amber,),
                       label: Text(
                         'Ver Meus Pedidos',
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 16, color: Colors.amber),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.brown[700],

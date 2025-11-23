@@ -203,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icon(Icons.store),
                     label: Text('Ver Todos os Produtos'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.brown[700],
+                      backgroundColor: Colors.white30,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),

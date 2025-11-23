@@ -199,7 +199,7 @@ class _PlansScreenState extends State<PlansScreen> {
                     SizedBox(width: 8),
                     ElevatedButton(
                       onPressed: _pickTime,
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.brown[700]),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.white30),
                       child: Text('Escolher'),
                     ),
                   ],
@@ -214,7 +214,7 @@ class _PlansScreenState extends State<PlansScreen> {
                     icon: Icon(Icons.person_pin_circle),
                     label: Text('Usar endereço do perfil'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.brown[600],
+                      backgroundColor: Colors.white30,
                       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
                   ),

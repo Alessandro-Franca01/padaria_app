@@ -115,7 +115,7 @@ class _CartScreenState extends State<CartScreen> {
             icon: Icon(Icons.shopping_bag),
             label: Text('Continuar Comprando'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.brown[700],
+              backgroundColor: Colors.white30,
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -207,7 +207,7 @@ class _CartScreenState extends State<CartScreen> {
                     style: TextStyle(fontSize: 18),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown[700],
+                    backgroundColor: Colors.white30,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

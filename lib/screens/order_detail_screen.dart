@@ -13,7 +13,6 @@ class OrderDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pedido #${order.id.substring(0, 8)}'),
-        backgroundColor: Colors.brown,
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
@@ -186,7 +185,7 @@ class OrderDetailScreen extends StatelessWidget {
                             Icon(Icons.image_not_supported),
                       ),
                     )
-                        : Icon(Icons.fastfood, color: Colors.brown),
+                        : Icon(Icons.fastfood, color: Theme.of(context).colorScheme.primary),
                   ),
                   SizedBox(width: 12),
                   // Informações do item
@@ -236,7 +235,7 @@ class OrderDetailScreen extends StatelessWidget {
                         'R\$ ${item.totalPrice.toStringAsFixed(2)}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.brown[700],
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 16,
                         ),
                       ),
@@ -401,7 +400,7 @@ class OrderDetailScreen extends StatelessWidget {
             icon: Icon(Icons.refresh),
             label: Text('Fazer Pedido Novamente'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.brown[700],
+              backgroundColor: Theme.of(context).colorScheme.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -423,7 +422,7 @@ class OrderDetailScreen extends StatelessWidget {
           label: Text('Entrar em Contato'),
           style: OutlinedButton.styleFrom(
             foregroundColor: Colors.brown[700],
-            side: BorderSide(color: Colors.brown[300]!),
+            side: BorderSide(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -467,7 +466,7 @@ class OrderDetailScreen extends StatelessWidget {
   Color _getStatusColor(OrderStatus status) {
     switch (status) {
       case OrderStatus.pending:
-        return Colors.orange;
+        return Theme.of(context).colorScheme.secondary;
       case OrderStatus.confirmed:
         return Colors.blue;
       case OrderStatus.preparing:

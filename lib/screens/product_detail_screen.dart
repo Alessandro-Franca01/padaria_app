@@ -21,7 +21,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.product.name),
-        backgroundColor: Colors.brown,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -41,7 +40,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 errorBuilder: (context, error, stackTrace) =>
                     Icon(Icons.image_not_supported, size: 100),
               )
-                  : Icon(Icons.fastfood, size: 100, color: Colors.brown),
+                  : Icon(Icons.fastfood, size: 100, color: Theme.of(context).colorScheme.primary),
             ),
 
             Padding(
@@ -67,7 +66,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.brown[700],
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ],
@@ -79,7 +78,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.brown[100],
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -160,7 +159,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         },
                         icon: Icon(Icons.add),
                         style: IconButton.styleFrom(
-                          backgroundColor: Colors.brown[200],
+                          backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                         ),
                       ),
                       Spacer(),
@@ -169,7 +168,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.brown[700],
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ],
@@ -271,7 +270,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ),
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.brown[700],
-                            side: BorderSide(color: Colors.brown[700]!),
+                            side: BorderSide(color: Theme.of(context).colorScheme.primary),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

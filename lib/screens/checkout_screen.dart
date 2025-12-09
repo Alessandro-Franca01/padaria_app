@@ -61,7 +61,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Finalizar Compra'),
-        backgroundColor: Colors.brown,
       ),
       body: Consumer3<CartService, AuthService, LoyaltyService>(
         builder: (context, cartService, authService, loyaltyService, child) {
@@ -163,7 +162,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.brown[700],
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ],
@@ -262,7 +261,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.brown[700],
-                      side: BorderSide(color: Colors.brown[300]!),
+                      side: BorderSide(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
                     ),
                   ),
                 ),
@@ -278,7 +277,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.brown[700],
-                      side: BorderSide(color: Colors.brown[300]!),
+                      side: BorderSide(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
                     ),
                   ),
                 ),
@@ -551,7 +550,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Por favor, selecione data e hora de entrega'),
-          backgroundColor: Colors.orange,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
         ),
       );
       return;
@@ -561,7 +560,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Selecione pelo menos um dia para o pedido recorrente'),
-          backgroundColor: Colors.orange,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
         ),
       );
       return;

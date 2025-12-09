@@ -102,7 +102,7 @@ class _PlansScreenState extends State<PlansScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(selected ? Icons.check_circle : Icons.add_circle_outline, color: Colors.brown),
+                  icon: Icon(selected ? Icons.check_circle : Icons.add_circle_outline, color: Theme.of(context).colorScheme.primary),
                   onPressed: () {
                     context.read<SubscriptionService>().toggleProduct(product);
                   },
@@ -140,7 +140,6 @@ class _PlansScreenState extends State<PlansScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Plano de Assinatura'),
-        backgroundColor: Colors.brown,
       ),
       body: Consumer2<ProductService, SubscriptionService>(
         builder: (context, productsService, sub, child) {
@@ -168,7 +167,7 @@ class _PlansScreenState extends State<PlansScreen> {
                     return ChoiceChip(
                       label: Text(d),
                       selected: selected,
-                      selectedColor: Colors.brown[200],
+                      selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                       onSelected: (val) {
                         final newDays = List<String>.from(sub.days);
                         if (val) {
@@ -234,9 +233,9 @@ class _PlansScreenState extends State<PlansScreen> {
                     Switch(
                           value: sub.active,
                           onChanged: (v) => context.read<SubscriptionService>().setActive(v),
-                          activeColor: Colors.brown,
-                         inactiveThumbColor: Colors.brown[200],
-                         inactiveTrackColor: Colors.brown[100],
+                          activeColor: Theme.of(context).colorScheme.primary,
+                         inactiveThumbColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                         inactiveTrackColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                         ),
                     Text('Plano ativo'),
                   ],

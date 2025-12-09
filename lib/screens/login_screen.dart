@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Icon(
                   Icons.bakery_dining,
                   size: 80,
-                  color: Colors.brown[700],
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 SizedBox(height: 20),
                 Text(
@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.brown[800],
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -166,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 style: TextStyle(fontSize: 16),
                               ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.brown[700],
+                          backgroundColor: Theme.of(context).colorScheme.primary,
                           padding: EdgeInsets.symmetric(vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -193,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextSpan(
                           text: 'Cadastre-se',
                           style: TextStyle(
-                            color: Colors.brown[700],
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

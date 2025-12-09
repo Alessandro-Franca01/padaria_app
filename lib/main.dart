@@ -8,16 +8,26 @@ import 'services/loyalty_service.dart';
 import 'services/order_service.dart';
 import 'services/chat_service.dart';
 import 'services/subscription_service.dart';
+import 'services/client_config_service.dart';
+import 'providers/theme_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Carregar configuração do cliente
+  await ClientConfigService().loadConfig();
+  
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final configService = ClientConfigService();
+    
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => CartService()),
         ChangeNotifierProvider(create: (_) => ProductService()),
@@ -26,22 +36,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ChatService()),
         ChangeNotifierProvider(create: (_) => SubscriptionService()),
       ],
-      child: MaterialApp(
-        title: 'Padaria App',
-        theme: ThemeData(
-          primarySwatch: Colors.brown,
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.brown).copyWith(
-            secondary: Colors.orangeAccent,
-          ),
-          fontFamily: 'Roboto',
-          textTheme: TextTheme(
-            displayLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.brown),
-            displayMedium: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.brown[700]),
-            bodyLarge: TextStyle(fontSize: 16.0, color: Colors.black87),
-            bodyMedium: TextStyle(fontSize: 14.0, color: Colors.black54),
-          ),
-        ),
-        home: SplashScreen(), // Set SplashScreen as the initial route
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: configService.appName,
+            theme: themeProvider.theme,
+            home: SplashScreen(),
+          );
+        },
       ),
     );
   }

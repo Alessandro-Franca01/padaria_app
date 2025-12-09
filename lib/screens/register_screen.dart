@@ -76,7 +76,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Cadastro'),
-        backgroundColor: Colors.brown[700],
+        backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -91,7 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.brown[800],
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 SizedBox(height: 20),
@@ -245,7 +245,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             TextSpan(
                               text: 'Termos e Condições',
                               style: TextStyle(
-                                color: Colors.brown[700],
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -267,7 +267,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           style: TextStyle(fontSize: 16),
                         ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown[700],
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                     padding: EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

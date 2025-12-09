@@ -13,10 +13,13 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    final accentColor = theme.colorScheme.secondary;
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Carrinho de Compras'),
-        backgroundColor: Colors.brown,
         actions: [
           Consumer<CartService>(
             builder: (context, cartService, child) {
@@ -171,7 +174,7 @@ class _CartScreenState extends State<CartScreen> {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Colors.brown[700],
+                  color: primaryColor,
                 ),
               ),
             ],
@@ -188,7 +191,7 @@ class _CartScreenState extends State<CartScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Faça login para finalizar a compra'),
-                          backgroundColor: Colors.orange,
+                          backgroundColor: accentColor,
                         ),
                       );
                       return;
@@ -314,7 +317,7 @@ class _CartItemCardState extends State<CartItemCard> {
                           Icon(Icons.image_not_supported),
                     ),
                   )
-                      : Icon(Icons.fastfood, color: Colors.brown),
+                      : Icon(Icons.fastfood, color: primaryColor),
                 ),
 
                 SizedBox(width: 12),
@@ -376,7 +379,7 @@ class _CartItemCardState extends State<CartItemCard> {
                             },
                             icon: Icon(Icons.add),
                             style: IconButton.styleFrom(
-                              backgroundColor: Colors.brown[200],
+                              backgroundColor: primaryColor.withOpacity(0.2),
                               minimumSize: Size(32, 32),
                             ),
                           ),
@@ -387,7 +390,7 @@ class _CartItemCardState extends State<CartItemCard> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.brown[700],
+                              color: primaryColor,
                             ),
                           ),
                         ],
@@ -506,7 +509,7 @@ class _CartItemCardState extends State<CartItemCard> {
                           },
                           child: Text('Salvar'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.brown[700],
+                            backgroundColor: primaryColor,
                           ),
                         ),
                       ],

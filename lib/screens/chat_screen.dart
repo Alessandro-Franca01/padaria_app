@@ -46,7 +46,7 @@ class _ChatScreenState extends State<ChatScreen> {
         margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
-          color: isUser ? Colors.brown[300] : Colors.grey[300],
+          color: isUser ? Theme.of(context).colorScheme.primary.withOpacity(0.3) : Colors.grey[300],
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -72,7 +72,6 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Chat com a Padaria'),
-        backgroundColor: Colors.brown,
       ),
       body: Column(
         children: [
@@ -112,7 +111,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 SizedBox(width: 8),
                 IconButton(
-                  icon: Icon(Icons.send, color: Colors.brown),
+                  icon: Icon(Icons.send, color: Theme.of(context).colorScheme.primary),
                   onPressed: _sendMessage,
                 ),
               ],

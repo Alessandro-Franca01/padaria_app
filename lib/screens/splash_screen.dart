@@ -5,6 +5,7 @@ import 'dart:async';
 import '../services/auth_service.dart';
 import '../services/product_service.dart';
 import '../services/cart_service.dart';
+import '../services/client_config_service.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 
@@ -50,6 +51,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final configService = ClientConfigService();
+    final primaryColor = configService.primaryColor;
+    final primaryDarkColor = configService.primaryDarkColor;
+    
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -59,9 +64,9 @@ class _SplashScreenState extends State<SplashScreen> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.brown[800]!,
-              Colors.brown[600]!,
-              Colors.brown[400]!,
+              primaryDarkColor,
+              primaryColor,
+              primaryColor.withOpacity(0.7),
             ],
           ),
         ),
@@ -85,12 +90,12 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Icon(
                 Icons.bakery_dining,
                 size: 80,
-                color: Colors.brown[700],
+                color: primaryColor,
               ),
             ),
             SizedBox(height: 30),
             Text(
-              'Padaria App',
+              configService.appName,
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -99,7 +104,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             SizedBox(height: 10),
             Text(
-              'Seu pão fresquinho na palma da mão',
+              configService.splashText,
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.white70,

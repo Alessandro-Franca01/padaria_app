@@ -5,6 +5,7 @@ import 'package:padaria_app/models/category_item.dart';
 import 'package:padaria_app/models/discount_item.dart';
 import '../services/cart_service.dart';
 import '../services/order_service.dart';
+import '../services/client_config_service.dart';
 import '../widgets/carousel_item.dart';
 import 'products_screen.dart';
 import 'cart_screen.dart';
@@ -81,10 +82,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final configService = ClientConfigService();
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text('Padaria App'),
-        backgroundColor: Colors.brown,
+        title: Text(configService.appName),
         actions: [
           IconButton(
             icon: Icon(Icons.chat),
@@ -170,11 +174,11 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 // Header
                 Text(
-                  'Bem-vindo!',
+                  configService.homeWelcome,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.brown,
+                    color: primaryColor,
                   ),
                 ),
                 SizedBox(height: 8),
@@ -219,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.brown,
+                    color: primaryColor,
                   ),
                 ),
                 SizedBox(height: 12),
@@ -300,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              color: Colors.brown,
+                              color: primaryColor,
                             ),
                           ),
                         ),
@@ -357,7 +361,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.brown,
+                          color: primaryColor,
                         ),
                       ),
                     ),
@@ -437,7 +441,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        backgroundColor: Colors.brown,
+        backgroundColor: primaryColor,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.white70,
         type: BottomNavigationBarType.fixed,

@@ -43,7 +43,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Colors.brown[800],
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -207,7 +207,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                         style: TextStyle(fontSize: 16, color: Colors.amber),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.brown[700],
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -233,7 +233,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                       ),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.brown[700],
-                        side: BorderSide(color: Colors.brown[700]!),
+                        side: BorderSide(color: Theme.of(context).colorScheme.primary),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),

@@ -30,7 +30,6 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
     return Scaffold(
       appBar: AppBar(
         title: Text('Meus Pedidos'),
-        backgroundColor: Colors.brown,
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.brown[200],
@@ -95,7 +94,7 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
             },
             child: Text('Fazer Login'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.brown[700],
+              backgroundColor: Theme.of(context).colorScheme.primary,
             ),
           ),
         ],
@@ -356,7 +355,7 @@ class OrderCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.brown[700],
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   Row(
@@ -388,7 +387,7 @@ class OrderCard extends StatelessWidget {
   Color _getStatusColor(OrderStatus status) {
     switch (status) {
       case OrderStatus.pending:
-        return Colors.orange;
+        return Theme.of(context).colorScheme.secondary;
       case OrderStatus.confirmed:
         return Colors.blue;
       case OrderStatus.preparing:

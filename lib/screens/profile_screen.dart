@@ -60,7 +60,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return Scaffold(
             appBar: AppBar(
               title: Text('Meu Perfil'),
-              backgroundColor: Colors.brown,
             ),
             body: Center(
               child: Text('Faça login para visualizar seu perfil.'),
@@ -87,13 +86,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         CircleAvatar(
                           radius: 32,
-                          backgroundColor: Colors.brown[200],
+                          backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                           child: Text(
                             user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Colors.brown[900],
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         ),
@@ -111,7 +110,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               SizedBox(height: 8),
                               Row(
                                 children: [
-                                  Icon(Icons.loyalty, color: Colors.orangeAccent),
+                                  Icon(Icons.loyalty, color: Theme.of(context).colorScheme.secondary),
                                   SizedBox(width: 8),
                                   Text('${user.loyaltyPoints} pontos de fidelidade'),
                                 ],
@@ -191,7 +190,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           icon: Icon(Icons.save),
                           label: Text('Salvar alterações'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.brown[700],
+                            backgroundColor: Theme.of(context).colorScheme.primary,
                             padding: EdgeInsets.symmetric(vertical: 14),
                           ),
                           onPressed: authService.isLoading ? null : _saveProfile,

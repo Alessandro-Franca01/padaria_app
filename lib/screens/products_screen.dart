@@ -28,10 +28,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Produtos'),
-        backgroundColor: Colors.brown,
         actions: [
           IconButton(
             icon: Icon(Icons.search),
@@ -85,7 +87,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                               selectedCategory = null;
                             });
                           },
-                          selectedColor: Colors.brown[300],
+                          selectedColor: primaryColor.withOpacity(0.3),
                         ),
                       );
                     }
@@ -140,6 +142,9 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -173,7 +178,7 @@ class ProductCard extends StatelessWidget {
                         Icon(Icons.image_not_supported, size: 50),
                   ),
                 )
-                    : Icon(Icons.fastfood, size: 50, color: Colors.brown),
+                    : Icon(Icons.fastfood, size: 50, color: primaryColor),
               ),
             ),
             Expanded(
@@ -211,7 +216,7 @@ class ProductCard extends StatelessWidget {
                             'R\$ ${product.price.toStringAsFixed(2)}',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.brown[700],
+                              color: primaryColor,
                               fontSize: 16,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -231,7 +236,7 @@ class ProductCard extends StatelessWidget {
                                   ),
                                 );
                               } : null,
-                              color: Colors.brown,
+                              color: primaryColor,
                               iconSize: 10,
                             );
                           },
@@ -297,6 +302,9 @@ class ProductSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    
     return Consumer<ProductService>(
       builder: (context, productService, child) {
         final suggestions = query.isEmpty
@@ -315,7 +323,7 @@ class ProductSearchDelegate extends SearchDelegate<String> {
                   borderRadius: BorderRadius.circular(8),
                   color: Colors.grey[200],
                 ),
-                child: Icon(Icons.fastfood, color: Colors.brown),
+                child: Icon(Icons.fastfood, color: primaryColor),
               ),
               title: Text(product.name),
               subtitle: Text('R\$ ${product.price.toStringAsFixed(2)}'),

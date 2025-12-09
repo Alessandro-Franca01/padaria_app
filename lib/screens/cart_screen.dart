@@ -13,10 +13,6 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final primaryColor = theme.colorScheme.primary;
-    final accentColor = theme.colorScheme.secondary;
-    
     return Scaffold(
       appBar: AppBar(
         title: Text('Carrinho de Compras'),
@@ -131,6 +127,10 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildCartSummary(BuildContext context, CartService cartService) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    final accentColor = theme.colorScheme.secondary;
+    
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -288,6 +288,9 @@ class _CartItemCardState extends State<CartItemCard> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    
     return Card(
       margin: EdgeInsets.only(bottom: 12),
       elevation: 2,
@@ -458,7 +461,7 @@ class _CartItemCardState extends State<CartItemCard> {
                     style: TextStyle(fontSize: 12),
                   ),
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.brown[600],
+                    foregroundColor: primaryColor,
                     padding: EdgeInsets.symmetric(horizontal: 8),
                   ),
                 ),

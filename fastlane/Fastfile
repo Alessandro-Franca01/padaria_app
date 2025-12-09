@@ -1,0 +1,70 @@
+# Fastfile para Multi-Client Build
+# Uso: fastlane build_central ou fastlane build_nordeste
+
+default_platform(:android)
+
+platform :android do
+  desc "Build para Padaria Central"
+  lane :build_central do
+    build_client(client_name: "padaria_central")
+  end
+
+  desc "Build para Padaria Nordeste"
+  lane :build_nordeste do
+    build_client(client_name: "padaria_nordeste")
+  end
+
+  desc "Build genérico para cliente"
+  lane :build_client do |options|
+    client_name = options[:client_name] || ENV["CLIENT_NAME"]
+    
+    if client_name.nil?
+      UI.user_error!("Client name deve ser fornecido. Use: fastlane build_client client_name:padaria_central")
+    end
+
+    UI.message("🚀 Iniciando build para cliente: #{client_name}")
+    
+    # 0. Criar diretório de assets/config se não existir
+    config_dir = "assets/config"
+    FileUtils.mkdir_p(config_dir) unless File.directory?(config_dir)
+    
+    # 1. Gerar client_config.json PRIMEIRO (antes do flutter pub get)
+    generate_client_config(
+      client_name: client_name
+    )
+
+    # 2. Atualizar configurações Android
+    update_android_config(
+      client_name: client_name
+    )
+
+    # 3. Atualizar ícones
+    update_icons(
+      client_name: client_name
+    )
+
+    # 4. Build Flutter (agora o arquivo JSON já existe)
+    sh("flutter clean")
+    
+    # flutter pub get pode retornar código 1 no Windows devido a avisos de symlink
+    # mas as dependências são baixadas com sucesso, então capturamos a saída manualmente
+    UI.message("📦 Instalando dependências Flutter...")
+    pub_get_output = `flutter pub get 2>&1`
+    puts pub_get_output
+    
+    # Verificar se as dependências foram baixadas com sucesso
+    if pub_get_output.include?("Got dependencies") || pub_get_output.include?("No dependencies changed")
+      UI.success("✅ Dependências Flutter instaladas com sucesso")
+      if pub_get_output.include?("symlink")
+        UI.message("⚠️  Aviso sobre symlinks (normal no Windows, pode ser ignorado)")
+      end
+    else
+      UI.user_error!("Erro ao instalar dependências Flutter")
+    end
+    
+    sh("flutter build apk --release")
+
+    UI.success("✅ Build concluído para #{client_name}!")
+    UI.message("📦 APK gerado em: build/app/outputs/flutter-apk/app-release.apk")
+  end
+end

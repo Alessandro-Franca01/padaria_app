@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.0020078">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: Switch to android build_client lane" time="0.0014934">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: generate_client_config" time="0.0048605">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: update_android_config" time="0.0089899">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="4: update_icons" time="0.0047546">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="5: flutter clean" time="3.8496025">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="6: flutter build apk --release" time="128.306567">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>

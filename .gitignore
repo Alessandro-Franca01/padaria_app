@@ -49,3 +49,7 @@ app.*.map.json
 
 # API PROJECT REMOVE
 padaria-api/
+!assets/config/.gitkeep
+
+# Client config generated files
+assets/config/

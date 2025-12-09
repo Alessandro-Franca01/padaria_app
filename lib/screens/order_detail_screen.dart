@@ -28,7 +28,7 @@ class OrderDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Status do pedido
-            _buildStatusCard(),
+            _buildStatusCard(context),
 
             SizedBox(height: 16),
 
@@ -38,7 +38,7 @@ class OrderDetailScreen extends StatelessWidget {
             SizedBox(height: 16),
 
             // Itens do pedido
-            _buildOrderItems(),
+            _buildOrderItems(context),
 
             SizedBox(height: 16),
 
@@ -65,7 +65,7 @@ class OrderDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusCard() {
+  Widget _buildStatusCard(BuildContext context) {
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -75,8 +75,8 @@ class OrderDetailScreen extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              _getStatusColor(order.status).withOpacity(0.1),
-              _getStatusColor(order.status).withOpacity(0.05),
+              _getStatusColor(context, order.status).withOpacity(0.1),
+              _getStatusColor(context, order.status).withOpacity(0.05),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -88,7 +88,7 @@ class OrderDetailScreen extends StatelessWidget {
             Icon(
               _getStatusIcon(order.status),
               size: 50,
-              color: _getStatusColor(order.status),
+              color: _getStatusColor(context, order.status),
             ),
             SizedBox(height: 12),
             Text(
@@ -96,7 +96,7 @@ class OrderDetailScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: _getStatusColor(order.status),
+                color: _getStatusColor(context, order.status),
               ),
             ),
             SizedBox(height: 8),
@@ -140,7 +140,11 @@ class OrderDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOrderItems() {
+  Widget _buildOrderItems(BuildContext context,) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    final accentColor = theme.colorScheme.secondary;
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -463,7 +467,11 @@ class OrderDetailScreen extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(OrderStatus status) {
+  Color _getStatusColor(BuildContext context, OrderStatus status) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    final accentColor = theme.colorScheme.secondary;
+
     switch (status) {
       case OrderStatus.pending:
         return Theme.of(context).colorScheme.secondary;

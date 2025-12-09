@@ -266,17 +266,17 @@ class OrderCard extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: _getStatusColor(order.status).withOpacity(0.1),
+                        color: _getStatusColor(context, order.status).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: _getStatusColor(order.status),
+                          color: _getStatusColor(context, order.status),
                           width: 1,
                         ),
                       ),
                       child: Text(
                         order.statusText,
                         style: TextStyle(
-                          color: _getStatusColor(order.status),
+                          color: _getStatusColor(context, order.status),
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),
@@ -384,7 +384,7 @@ class OrderCard extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(OrderStatus status) {
+  Color _getStatusColor(BuildContext context, OrderStatus status) {
     switch (status) {
       case OrderStatus.pending:
         return Theme.of(context).colorScheme.secondary;

@@ -50,7 +50,7 @@ flutter:
     - assets/images/
     - assets/images/categories/
     - assets/images/descontos/
-    - assets/config/
+    - assets/config/client_config.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -39,6 +39,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "app"
+    productFlavors {
+        app1 {
+            dimension "app"
+            applicationId "com.central.app1" // Package Name ÚNICO
+            resValue "string", "app_name", "Padaria Central"
+        }
+        app2 {
+            dimension "app"
+            applicationId "com.nordeste.app2" // Package Name ÚNICO
+            resValue "string", "app_name", "Padaria Nordeste"
+        }
+    }
 }
 
 flutter {

@@ -14,6 +14,7 @@ import 'package:padaria_app/models/order.dart';
 import 'chat_screen.dart';
 import 'plans_screen.dart';
 import 'profile_screen.dart';
+import 'plan_details_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override

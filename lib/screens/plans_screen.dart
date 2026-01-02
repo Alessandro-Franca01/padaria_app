@@ -5,6 +5,8 @@ import '../services/subscription_service.dart';
 import '../services/product_service.dart';
 import '../services/auth_service.dart';
 import '../models/product.dart';
+import '../models/subscription_plan_preview.dart';
+import 'plan_details_screen.dart'; // Importação para a nova tela de detalhes
 
 class PlansScreen extends StatefulWidget {
   @override
@@ -68,6 +70,46 @@ class _PlansScreenState extends State<PlansScreen> {
     context.read<SubscriptionService>().setAddress(user.address);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Endereço do perfil aplicado ao plano.')),
+    );
+  }
+
+  void _savePlan(BuildContext context) {
+    final subscriptionService = context.read<SubscriptionService>();
+    final plan = subscriptionService.plan;
+
+    if (plan == null || plan.items.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Selecione pelo menos um produto para o plano.')),
+      );
+      return;
+    }
+
+    if (plan.days.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Selecione pelo menos um dia da semana para o plano.')),
+      );
+      return;
+    }
+
+    if (plan.time.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Selecione um horário de entrega para o plano.')),
+      );
+      return;
+    }
+
+    if (plan.deliveryAddress.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Informe um endereço de entrega para o plano.')),
+      );
+      return;
+    }
+
+    // Navegar para a tela de detalhes do plano
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => PlanDetailsScreen(plan: plan),
+      ),
     );
   }
 
@@ -157,6 +199,41 @@ class _PlansScreenState extends State<PlansScreen> {
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: products.length,
                   itemBuilder: (context, index) => _buildProductItem(products[index]),
+                ),
+                SizedBox(height: 16),
+                Text('Nossos Planos Sugeridos'),
+                SizedBox(height: 8),
+                SizedBox(
+                  height: 200, // Altura fixa para o ListView horizontal
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: subscriptionPlanPreviews.length,
+                    itemBuilder: (context, index) {
+                      final plan = subscriptionPlanPreviews[index];
+                      return Card(
+                        margin: EdgeInsets.only(right: 16),
+                        child: Container(
+                          width: 150, // Largura fixa para cada cartão de plano
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.asset(plan.imagePath, fit: BoxFit.cover),
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(plan.title, style: TextStyle(fontWeight: FontWeight.bold)),
+                              Text(plan.description, style: TextStyle(fontSize: 12)),
+                              Text('R\$ ${plan.price.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.brown)),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
                 SizedBox(height: 16),
                 Text('Dias da semana'),
@@ -260,6 +337,16 @@ class _PlansScreenState extends State<PlansScreen> {
                       ],
                     ),
                   ),
+                ),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => _savePlan(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.brown[200],
+                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                    textStyle: TextStyle(fontSize: 18),
+                  ),
+                  child: Text('Salvar Plano'),
                 ),
               ],
             ),

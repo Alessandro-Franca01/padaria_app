@@ -12,8 +12,8 @@ import 'cart_screen.dart';
 import 'orders_screen.dart';
 import 'package:padaria_app/models/order.dart';
 import 'chat_screen.dart';
-import 'plans_screen.dart';
 import 'profile_screen.dart';
+import 'subscription_plans_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -515,7 +515,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PlansScreen(),
+                          builder: (context) => SubscriptionPlansListScreen(),
                         ),
                       );
                     },
@@ -538,7 +538,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          PlansScreen(),
+          SubscriptionPlansListScreen(),
 
           // Página de Pedidos/Faturas
           OrdersScreen(),

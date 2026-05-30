@@ -69,10 +69,11 @@ class PlanDetailsScreen extends StatelessWidget {
                   Navigator.of(context).pop(); // Volta para a tela anterior
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.brown, // Corrigido para Colors.brown
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  backgroundColor: Colors.brown.shade200, // cor mais clara
+                  foregroundColor: Colors.brown.shade900, // texto com bom contras                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                   textStyle: TextStyle(fontSize: 18),
                 ),
+                // TODO: Alterar a cor do botão para cor mais clara
                 child: Text('Voltar'),
               ),
             ),

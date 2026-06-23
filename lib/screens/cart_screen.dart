@@ -4,6 +4,7 @@ import '../models/cart_item.dart';
 import '../services/cart_service.dart';
 import '../services/auth_service.dart';
 import 'checkout_screen.dart';
+import 'products_screen.dart';
 
 class CartScreen extends StatefulWidget {
   @override
@@ -110,7 +111,15 @@ class _CartScreenState extends State<CartScreen> {
           SizedBox(height: 32),
           ElevatedButton.icon(
             onPressed: () {
-              Navigator.pop(context);
+              final navigator = Navigator.of(context);
+              if (navigator.canPop()) {
+                navigator.pop();
+              }
+              navigator.push(
+                MaterialPageRoute(
+                  builder: (context) => ProductsScreen(),
+                ),
+              );
             },
             icon: Icon(Icons.shopping_bag),
             label: Text('Continuar Comprando'),

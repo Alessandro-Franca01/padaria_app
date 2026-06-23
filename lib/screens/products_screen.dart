@@ -116,7 +116,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: 0.7,
+                    childAspectRatio: 0.80,
                   ),
                   itemCount: filteredProducts.length,
                   itemBuilder: (context, index) {
@@ -156,7 +156,7 @@ class ProductCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 3,
+              flex: 5,
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -177,11 +177,12 @@ class ProductCard extends StatelessWidget {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 4,
               child: Padding(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       product.name,
@@ -205,6 +206,7 @@ class ProductCard extends StatelessWidget {
                     Spacer(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           child: Text(
@@ -212,27 +214,37 @@ class ProductCard extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.brown[700],
-                              fontSize: 16,
+                              fontSize: 15,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        SizedBox(width: 4),
                         Consumer<CartService>(
                           builder: (context, cartService, child) {
-                            return IconButton(
-                              icon: Icon(Icons.add_shopping_cart),
-                              onPressed: product.isAvailable ? () {
-                                cartService.addItem(product);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('${product.name} adicionado ao carrinho'),
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: Colors.green,
+                            return Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: product.isAvailable ? () {
+                                  cartService.addItem(product);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('${product.name} adicionado ao carrinho'),
+                                      duration: Duration(seconds: 2),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                } : null,
+                                borderRadius: BorderRadius.circular(20),
+                                child: Padding(
+                                  padding: EdgeInsets.all(4),
+                                  child: Icon(
+                                    Icons.add_shopping_cart,
+                                    color: product.isAvailable ? Colors.brown : Colors.grey,
+                                    size: 20,
                                   ),
-                                );
-                              } : null,
-                              color: Colors.brown,
-                              iconSize: 10,
+                                ),
+                              ),
                             );
                           },
                         ),

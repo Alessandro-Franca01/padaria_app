@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../services/cart_service.dart';
+import 'cart_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
@@ -238,6 +239,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                             backgroundColor: widget.product.isAvailable
                                 ? Colors.brown[700]
                                 : Colors.grey,
+                            foregroundColor: Colors.white, // texto com contraste melhor
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -257,20 +259,47 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       builder: (context, cartService, child) {
                         return OutlinedButton.icon(
                           onPressed: () {
-                            // Navegar para o carrinho
-                            Navigator.pushNamed(context, '/cart');
+                            // Navegar para o carrinho (usa rota explícita com MaterialPageRoute)
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => CartScreen()),
+                            );
                           },
-                          icon: Badge(
-                            isLabelVisible: cartService.itemCount > 0,
-                            label: Text(cartService.itemCount.toString()),
-                            child: Icon(Icons.shopping_cart),
+                          icon: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Icon(Icons.shopping_cart),
+                              if (cartService.itemCount > 0)
+                                Positioned(
+                                  right: -6,
+                                  top: -6,
+                                  child: Container(
+                                    padding: EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    constraints: BoxConstraints(minWidth: 18, minHeight: 18),
+                                    child: Center(
+                                      child: Text(
+                                        '${cartService.itemCount}',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                           label: Text(
                             'Ver Carrinho (${cartService.itemCount})',
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(fontSize: 16, color: Colors.brown.shade900),
                           ),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.brown[700],
+                            foregroundColor: Colors.brown.shade900,
                             side: BorderSide(color: Colors.brown[700]!),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),

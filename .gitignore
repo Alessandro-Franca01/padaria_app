@@ -9,6 +9,8 @@
 .history
 .svn/
 migrate_working_dir/
+.vscode
+assets/config
 
 # IntelliJ related
 *.iml
@@ -46,6 +48,3 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-
-# API PROJECT REMOVE
-padaria-api/

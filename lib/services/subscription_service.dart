@@ -9,6 +9,7 @@ import 'product_service.dart';
 
 class SubscriptionService with ChangeNotifier {
   SubscriptionPlan? _plan;
+  late final List<SubscriptionPlan> _userPlans = _buildMockUserPlans();
 
   SubscriptionPlan? get plan => _plan;
   List<CartItem> get items => _plan?.items ?? [];
@@ -16,6 +17,63 @@ class SubscriptionService with ChangeNotifier {
   String get time => _plan?.time ?? '';
   String get address => _plan?.deliveryAddress ?? '';
   bool get active => _plan?.active ?? false;
+  List<SubscriptionPlan> get userPlans => List.unmodifiable(_userPlans);
+
+  List<SubscriptionPlan> _buildMockUserPlans() {
+    final Product paoFrances = Product(
+      id: 'p1',
+      name: 'Pão Francês',
+      description: 'Pão francês tradicional, fresco e crocante.',
+      price: 1.50,
+      imageUrl: 'assets/images/paes_artesanais.jpeg',
+      category: 'Pães',
+    );
+
+    final Product boloChocolate = Product(
+      id: 'd1',
+      name: 'Bolo de Chocolate',
+      description: 'Bolo de chocolate com cobertura de brigadeiro.',
+      price: 25.00,
+      imageUrl: 'assets/images/bolos_caseiros.jpeg',
+      category: 'Bolos',
+    );
+
+    final Product cafe = Product(
+      id: 'b1',
+      name: 'Café Coado',
+      description: 'Café coado na hora.',
+      price: 5.00,
+      imageUrl: 'assets/images/categories/categoria_cafes.webp',
+      category: 'Bebidas',
+    );
+
+    return [
+      SubscriptionPlan(
+        id: 'plano-cafe-da-manha',
+        userId: 'user-1',
+        items: [
+          CartItem(product: paoFrances, quantity: 6),
+          CartItem(product: cafe, quantity: 2),
+        ],
+        days: ['Seg', 'Qua', 'Sex'],
+        time: '08:00',
+        deliveryAddress: 'Rua Exemplo, 123 - Centro',
+        active: true,
+      ),
+      SubscriptionPlan(
+        id: 'plano-lanche-da-tarde',
+        userId: 'user-1',
+        items: [
+          CartItem(product: boloChocolate, quantity: 1),
+          CartItem(product: paoFrances, quantity: 4),
+        ],
+        days: ['Ter', 'Qui'],
+        time: '15:00',
+        deliveryAddress: 'Rua Exemplo, 123 - Centro',
+        active: false,
+      ),
+    ];
+  }
 
   Future<void> loadFromStorage(ProductService productService) async {
     final prefs = await SharedPreferences.getInstance();

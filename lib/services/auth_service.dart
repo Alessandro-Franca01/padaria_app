@@ -30,7 +30,7 @@ class AuthService with ChangeNotifier {
           'name': 'Usuário Teste',
           'email': email,
           'phone': '(11) 98765-4321',
-          'address': 'Av. Presidente Café Filho, 954',
+          'address': 'Av. Eptacio Pessoa, 123',
           'loyaltyPoints': 50,
         };
         

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/subscription_plan.dart';
+import 'plans_screen.dart';
 
 class PlanDetailsScreen extends StatelessWidget {
   final SubscriptionPlan plan;
@@ -8,12 +9,20 @@ class PlanDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final total = plan.items.fold<double>(0, (sum, i) => sum + i.totalPrice);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Detalhes do Plano'),
         backgroundColor: Colors.brown,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (ctx) => PlansScreen(editingPlan: plan)),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
@@ -34,16 +43,15 @@ class PlanDetailsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      plan.id,
+                      plan.templateName,
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.brown),
                     ),
                     SizedBox(height: 8),
                     _buildDetailRow('Status:', plan.active ? 'Ativo' : 'Inativo'),
-                    _buildDetailRow('ID do Usuário:', plan.userId),
                     _buildDetailRow('Dias de Entrega:', plan.days.join(', ')),
                     _buildDetailRow('Horário de Entrega:', plan.time),
                     _buildDetailRow('Endereço de Entrega:', plan.deliveryAddress),
-                    _buildDetailRow('Total estimado:', 'R\$ ${total.toStringAsFixed(2)}'),
+                    _buildDetailRow('Total estimado:', 'R\$ ${plan.totalPrice.toStringAsFixed(2)}'),
                     SizedBox(height: 16),
                     Text(
                       'Produtos:',
@@ -69,11 +77,11 @@ class PlanDetailsScreen extends StatelessWidget {
                   Navigator.of(context).pop(); // Volta para a tela anterior
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.brown.shade200, // cor mais clara
-                  foregroundColor: Colors.brown.shade900, // texto com bom contras                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  backgroundColor: Colors.brown.shade200,
+                  foregroundColor: Colors.brown.shade900,
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                   textStyle: TextStyle(fontSize: 18),
                 ),
-                // TODO: Alterar a cor do botão para cor mais clara
                 child: Text('Voltar'),
               ),
             ),

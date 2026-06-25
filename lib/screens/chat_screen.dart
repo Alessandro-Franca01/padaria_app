@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../services/chat_service.dart';
+import '../services/api_client.dart';
 import '../models/chat_message.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -17,25 +18,34 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final chat = context.read<ChatService>();
-      chat.loadHistoryFromStorage();
+      context.read<ChatService>().fetchMessages();
     });
   }
 
-  void _sendMessage() {
+  Future<void> _sendMessage() async {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
-    context.read<ChatService>().sendUserMessage(text);
     _controller.clear();
-    Future.delayed(Duration(milliseconds: 300), () {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
+    try {
+      await context.read<ChatService>().sendMessage(text);
+      Future.delayed(Duration(milliseconds: 300), () {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e is ApiException ? e.message : 'Não foi possível enviar a mensagem.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   Widget _buildMessage(ChatMessage message) {
@@ -73,6 +83,12 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: Text('Chat com a Padaria'),
         backgroundColor: Colors.brown,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () => context.read<ChatService>().fetchMessages(),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -80,12 +96,15 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Consumer<ChatService>(
               builder: (context, chat, child) {
                 final msgs = chat.messages;
-                return ListView.builder(
-                  controller: _scrollController,
-                  itemCount: msgs.length,
-                  itemBuilder: (context, index) {
-                    return _buildMessage(msgs[index]);
-                  },
+                return RefreshIndicator(
+                  onRefresh: () => chat.fetchMessages(),
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: msgs.length,
+                    itemBuilder: (context, index) {
+                      return _buildMessage(msgs[index]);
+                    },
+                  ),
                 );
               },
             ),

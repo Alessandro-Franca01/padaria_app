@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import '../models/user.dart';
+import 'api_client.dart';
 
 class AuthService with ChangeNotifier {
   User? _currentUser;
@@ -14,45 +15,24 @@ class AuthService with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get token => _token;
 
-  // Simulação de dados - Em uma aplicação real, isso seria substituído por chamadas à API
   Future<bool> login(String email, String password) async {
     try {
       _isLoading = true;
       notifyListeners();
-      
-      // Simula chamada de API com atraso
-      await Future.delayed(Duration(seconds: 1));
-      
-      // Simulação de resposta de API
-      if (email == 'teste@email.com' && password == '123456') {
-        final userData = {
-          'id': '1',
-          'name': 'Usuário Teste',
-          'email': email,
-          'phone': '(11) 98765-4321',
-          'address': 'Av. Eptacio Pessoa, 123',
-          'loyaltyPoints': 50,
-        };
-        
-        _currentUser = User.fromJson(userData);
-        _token = 'simulated_token_${DateTime.now().millisecondsSinceEpoch}';
-        
-        // Salva dados do usuário no armazenamento seguro
-        await _storage.write(key: 'user_data', value: jsonEncode(userData));
-        await _storage.write(key: 'auth_token', value: _token);
-        
-        _isLoading = false;
-        notifyListeners();
-        return true;
-      } else {
-        _isLoading = false;
-        notifyListeners();
-        return false;
-      }
+
+      final data = await ApiClient.post(
+        '/login',
+        body: {'email': email, 'password': password},
+        withAuth: false,
+      );
+
+      await _persistSession(data);
+      return true;
     } catch (e) {
+      return false;
+    } finally {
       _isLoading = false;
       notifyListeners();
-      return false;
     }
   }
 
@@ -60,34 +40,27 @@ class AuthService with ChangeNotifier {
     try {
       _isLoading = true;
       notifyListeners();
-      
-      // Simula chamada de API com atraso
-      await Future.delayed(Duration(seconds: 1));
-      
-      // Simulação de resposta de API
-      final userData = {
-        'id': DateTime.now().millisecondsSinceEpoch.toString(),
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'address': address,
-        'loyaltyPoints': 0,
-      };
-      
-      _currentUser = User.fromJson(userData);
-      _token = 'simulated_token_${DateTime.now().millisecondsSinceEpoch}';
-      
-      // Salva dados do usuário no armazenamento seguro
-      await _storage.write(key: 'user_data', value: jsonEncode(userData));
-      await _storage.write(key: 'auth_token', value: _token);
-      
-      _isLoading = false;
-      notifyListeners();
+
+      final data = await ApiClient.post(
+        '/register',
+        body: {
+          'name': name,
+          'email': email,
+          'password': password,
+          'password_confirmation': password,
+          'phone': phone,
+          'address': address,
+        },
+        withAuth: false,
+      );
+
+      await _persistSession(data);
       return true;
     } catch (e) {
+      return false;
+    } finally {
       _isLoading = false;
       notifyListeners();
-      return false;
     }
   }
 
@@ -95,7 +68,7 @@ class AuthService with ChangeNotifier {
     try {
       final userData = await _storage.read(key: 'user_data');
       final savedToken = await _storage.read(key: 'auth_token');
-      
+
       if (userData != null && savedToken != null) {
         _currentUser = User.fromJson(jsonDecode(userData));
         _token = savedToken;
@@ -109,6 +82,11 @@ class AuthService with ChangeNotifier {
   }
 
   Future<void> logout() async {
+    try {
+      await ApiClient.post('/logout');
+    } catch (e) {
+      // logout no backend é best-effort; sessão local é limpa de qualquer forma
+    }
     _currentUser = null;
     _token = null;
     await _storage.delete(key: 'user_data');
@@ -118,36 +96,29 @@ class AuthService with ChangeNotifier {
 
   Future<bool> updateProfile(String name, String phone, String address) async {
     try {
-      if (_currentUser == null) return false;
-      
       _isLoading = true;
       notifyListeners();
-      
-      // Simula chamada de API com atraso
-      await Future.delayed(Duration(seconds: 1));
-      
-      // Atualiza dados do usuário
-      final userData = {
-        'id': _currentUser!.id,
-        'name': name,
-        'email': _currentUser!.email,
-        'phone': phone,
-        'address': address,
-        'loyaltyPoints': _currentUser!.loyaltyPoints,
-      };
-      
-      _currentUser = User.fromJson(userData);
-      
-      // Salva dados atualizados
-      await _storage.write(key: 'user_data', value: jsonEncode(userData));
-      
-      _isLoading = false;
-      notifyListeners();
+
+      final data = await ApiClient.put(
+        '/users/me',
+        body: {'name': name, 'phone': phone, 'address': address},
+      );
+
+      _currentUser = User.fromJson(data);
+      await _storage.write(key: 'user_data', value: jsonEncode(data));
       return true;
     } catch (e) {
+      return false;
+    } finally {
       _isLoading = false;
       notifyListeners();
-      return false;
     }
+  }
+
+  Future<void> _persistSession(dynamic data) async {
+    _currentUser = User.fromJson(data['user']);
+    _token = data['token'];
+    await _storage.write(key: 'user_data', value: jsonEncode(data['user']));
+    await _storage.write(key: 'auth_token', value: _token);
   }
 }

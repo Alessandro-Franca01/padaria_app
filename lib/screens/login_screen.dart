@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../services/auth_service.dart';
+import '../services/order_service.dart';
 import 'home_screen.dart';
 import 'register_screen.dart';
 
@@ -36,6 +37,10 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (success) {
+      if (authService.currentUser != null) {
+        Provider.of<OrderService>(context, listen: false)
+            .fetchOrders(authService.currentUser!.id);
+      }
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (ctx) => HomeScreen()),
       );

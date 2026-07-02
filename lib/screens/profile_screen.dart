@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/user.dart';
 import '../services/auth_service.dart';
+import 'login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -50,6 +51,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Future<void> _logout() async {
+    final authService = context.read<AuthService>();
+    await authService.logout();
+
+    if (!mounted) return;
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthService>(
@@ -72,6 +85,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           appBar: AppBar(
             title: Text('Meu Perfil'),
             backgroundColor: Colors.brown,
+            actions: [
+              IconButton(
+                icon: Icon(Icons.logout),
+                tooltip: 'Sair',
+                onPressed: _logout,
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             padding: EdgeInsets.all(16),

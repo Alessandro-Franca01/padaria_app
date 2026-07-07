@@ -87,6 +87,12 @@ class AuthService with ChangeNotifier {
     } catch (e) {
       // logout no backend é best-effort; sessão local é limpa de qualquer forma
     }
+    await clearSession();
+  }
+
+  /// Limpa a sessão local sem chamar a API — usado quando o token já é
+  /// inválido/expirado (resposta 401) e não há motivo para avisar o backend.
+  Future<void> clearSession() async {
     _currentUser = null;
     _token = null;
     await _storage.delete(key: 'user_data');

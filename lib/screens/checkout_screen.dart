@@ -56,7 +56,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     if (authService.currentUser != null) {
       _deliveryAddressController.text = authService.currentUser!.address;
     }
-    Provider.of<LoyaltyService>(context, listen: false).fetchStatus();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<LoyaltyService>(context, listen: false).fetchStatus();
+    });
   }
 
   @override

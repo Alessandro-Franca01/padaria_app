@@ -20,9 +20,21 @@ class ApiException implements Exception {
 }
 
 class ApiClient {
-  static const String baseUrl = 'http://10.0.2.2:8000/api';
+  static const String _host = 'http://10.0.2.2:8000';
+  static const String baseUrl = '$_host/api';
   static const FlutterSecureStorage _storage = FlutterSecureStorage();
   static const String _tokenKey = 'auth_token';
+
+  /// Resolve um caminho relativo retornado pela API (ex: imagem de upload
+  /// em "/uploads/products/x.jpg") para uma URL absoluta que o Flutter
+  /// consiga carregar via rede.
+  static String mediaUrl(String path) {
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
+    return '$_host$path';
+  }
+
+  /// Chamado quando uma requisição autenticada volta com 401 (token ausente/expirado).
+  static void Function()? onUnauthorized;
 
   static Future<String?> getToken() => _storage.read(key: _tokenKey);
 
@@ -44,7 +56,7 @@ class ApiClient {
       Uri.parse('$baseUrl$path'),
       headers: await _headers(withAuth: withAuth),
     );
-    return _handleResponse(response);
+    return _handleResponse(response, withAuth: withAuth);
   }
 
   static Future<dynamic> post(String path, {Map<String, dynamic>? body, bool withAuth = true}) async {
@@ -53,7 +65,7 @@ class ApiClient {
       headers: await _headers(withAuth: withAuth),
       body: body != null ? jsonEncode(body) : null,
     );
-    return _handleResponse(response);
+    return _handleResponse(response, withAuth: withAuth);
   }
 
   static Future<dynamic> put(String path, {Map<String, dynamic>? body, bool withAuth = true}) async {
@@ -62,13 +74,17 @@ class ApiClient {
       headers: await _headers(withAuth: withAuth),
       body: body != null ? jsonEncode(body) : null,
     );
-    return _handleResponse(response);
+    return _handleResponse(response, withAuth: withAuth);
   }
 
-  static dynamic _handleResponse(http.Response response) {
+  static dynamic _handleResponse(http.Response response, {bool withAuth = true}) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       if (response.body.isEmpty) return null;
       return jsonDecode(response.body);
+    }
+
+    if (withAuth && response.statusCode == 401) {
+      onUnauthorized?.call();
     }
 
     Map<String, dynamic> body = {};

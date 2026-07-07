@@ -1,18 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/subscription_plan_preview.dart';
 import '../services/subscription_service.dart';
+import '../services/auth_service.dart';
+import '../models/subscription_template.dart';
 import '../models/subscription_plan.dart';
 import 'plan_details_screen.dart';
 import 'plans_screen.dart';
 
-class SubscriptionPlansListScreen extends StatelessWidget {
+class SubscriptionPlansListScreen extends StatefulWidget {
   const SubscriptionPlansListScreen({super.key});
 
   @override
+  State<SubscriptionPlansListScreen> createState() => _SubscriptionPlansListScreenState();
+}
+
+class _SubscriptionPlansListScreenState extends State<SubscriptionPlansListScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final subscriptionService = context.read<SubscriptionService>();
+      subscriptionService.fetchTemplates();
+      final authService = context.read<AuthService>();
+      if (authService.isAuthenticated) {
+        subscriptionService.fetchUserPlans(authService.currentUser!.id);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final myPlans = context.watch<SubscriptionService>().userPlans;
+    final subscriptionService = context.watch<SubscriptionService>();
+    final templates = subscriptionService.templates;
+    final myPlans = subscriptionService.userPlans;
 
     return Scaffold(
       appBar: AppBar(
@@ -44,18 +65,23 @@ class SubscriptionPlansListScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          SizedBox(
-            height: 210,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: subscriptionPlanPreviews.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (context, index) {
-                final plan = subscriptionPlanPreviews[index];
-                return _CatalogPlanCard(plan: plan);
-              },
+          if (subscriptionService.isLoading)
+            const Center(child: CircularProgressIndicator())
+          else if (templates.isEmpty)
+            Text('Nenhum plano disponível no momento.', style: TextStyle(color: Colors.grey[600]))
+          else
+            SizedBox(
+              height: 210,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: templates.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  final template = templates[index];
+                  return _TemplateCard(template: template);
+                },
+              ),
             ),
-          ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -110,10 +136,10 @@ class SubscriptionPlansListScreen extends StatelessWidget {
   }
 }
 
-class _CatalogPlanCard extends StatelessWidget {
-  final SubscriptionPlanPreview plan;
+class _TemplateCard extends StatelessWidget {
+  final SubscriptionTemplate template;
 
-  const _CatalogPlanCard({required this.plan});
+  const _TemplateCard({required this.template});
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +152,7 @@ class _CatalogPlanCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           onTap: () {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => PlansScreen()),
+              MaterialPageRoute(builder: (_) => PlansScreen(initialTemplateId: template.id)),
             );
           },
           child: Padding(
@@ -137,33 +163,32 @@ class _CatalogPlanCard extends StatelessWidget {
                 Expanded(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      plan.imagePath,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                    ),
+                    child: template.imagePath.startsWith('assets/')
+                        ? Image.asset(template.imagePath, fit: BoxFit.cover, width: double.infinity)
+                        : Container(color: Colors.brown[50]),
                   ),
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  plan.title,
+                  template.name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  plan.description,
+                  template.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.grey[700], fontSize: 12),
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'R\$ ${plan.price.toStringAsFixed(2)}',
+                  '${template.products.length} produtos disponíveis',
                   style: TextStyle(
                     color: Colors.brown[700],
                     fontWeight: FontWeight.bold,
+                    fontSize: 12,
                   ),
                 ),
               ],
@@ -182,8 +207,6 @@ class _MyPlanTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final total = plan.items.fold<double>(0, (sum, i) => sum + i.totalPrice);
-
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
@@ -195,13 +218,13 @@ class _MyPlanTile extends StatelessWidget {
           ),
         ),
         title: Text(
-          plan.id,
+          plan.templateName,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
-          '${plan.days.join(', ')} • ${plan.time} • R\$ ${total.toStringAsFixed(2)}',
+          '${plan.days.join(', ')} • ${plan.time} • R\$ ${plan.totalPrice.toStringAsFixed(2)}',
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
@@ -215,4 +238,3 @@ class _MyPlanTile extends StatelessWidget {
     );
   }
 }
-

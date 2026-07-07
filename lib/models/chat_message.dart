@@ -23,7 +23,7 @@ class ChatMessage {
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
     return ChatMessage(
       id: json['id'],
-      sender: MessageSender.values[json['sender'] ?? 0],
+      sender: MessageSender.values.byName(json['sender'].toString().toLowerCase()),
       content: json['content'],
       timestamp: DateTime.parse(json['timestamp']),
     );
@@ -32,7 +32,7 @@ class ChatMessage {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'sender': sender.index,
+      'sender': sender.name.toUpperCase(),
       'content': content,
       'timestamp': timestamp.toIso8601String(),
     };

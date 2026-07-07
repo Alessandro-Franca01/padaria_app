@@ -1,63 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 import '../models/chat_message.dart';
+import 'api_client.dart';
 
 class ChatService with ChangeNotifier {
   List<ChatMessage> _messages = [];
+  bool _isLoading = false;
 
   List<ChatMessage> get messages => [..._messages];
+  bool get isLoading => _isLoading;
 
-  Future<void> loadHistoryFromStorage() async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString('chat_history');
-    if (data != null) {
-      final List<dynamic> decoded = jsonDecode(data);
-      _messages = decoded.map((e) => ChatMessage.fromJson(e)).toList();
-      notifyListeners();
+  Future<void> fetchMessages() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final data = await ApiClient.get('/chat-messages') as List;
+      _messages = data.map((json) => ChatMessage.fromJson(json)).toList();
+    } catch (e) {
+      // mantém o histórico já carregado em caso de falha
     }
-  }
 
-  Future<void> _saveHistoryToStorage() async {
-    final prefs = await SharedPreferences.getInstance();
-    final data = jsonEncode(_messages.map((m) => m.toJson()).toList());
-    await prefs.setString('chat_history', data);
-  }
-
-  void sendUserMessage(String content) {
-    final msg = ChatMessage(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      sender: MessageSender.user,
-      content: content,
-      timestamp: DateTime.now(),
-    );
-    _messages.add(msg);
-    _saveHistoryToStorage();
-    notifyListeners();
-    _autoReply();
-  }
-
-  void sendBakeryMessage(String content) {
-    final msg = ChatMessage(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      sender: MessageSender.bakery,
-      content: content,
-      timestamp: DateTime.now(),
-    );
-    _messages.add(msg);
-    _saveHistoryToStorage();
+    _isLoading = false;
     notifyListeners();
   }
 
-  void clearHistory() {
-    _messages = [];
-    _saveHistoryToStorage();
+  Future<void> sendMessage(String content) async {
+    final data = await ApiClient.post('/chat-messages', body: {'content': content});
+    _messages.add(ChatMessage.fromJson(data));
     notifyListeners();
-  }
-
-  void _autoReply() async {
-    await Future.delayed(Duration(seconds: 1));
-    sendBakeryMessage('Recebido! Em breve entraremos em contato.');
   }
 }

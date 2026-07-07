@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/order.dart';
 import '../services/cart_service.dart';
 import '../services/auth_service.dart';
 import '../services/loyalty_service.dart';
+import '../services/order_service.dart';
+import '../services/api_client.dart';
 import 'order_confirmation_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -22,6 +23,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   bool _useCurrentAddress = true;
   bool _isRecurring = false;
   List<String> _selectedRecurringDays = [];
+  bool _isSubmitting = false;
 
   final List<String> _paymentMethods = [
     'dinheiro',
@@ -54,6 +56,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     if (authService.currentUser != null) {
       _deliveryAddressController.text = authService.currentUser!.address;
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<LoyaltyService>(context, listen: false).fetchStatus();
+    });
   }
 
   @override
@@ -425,7 +430,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ],
             ),
             SizedBox(height: 12),
-            Text('Pontos disponíveis: ${loyaltyService.loyaltyPoints}'),
+            Text('Pontos disponíveis: ${loyaltyService.points}'),
             SizedBox(height: 8),
             Text(
               'Com esta compra você ganhará: ${(totalAmount / 5).round()} pontos',
@@ -478,10 +483,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       width: double.infinity,
       height: 50,
       child: ElevatedButton.icon(
-        onPressed: () => _finishOrder(cartService, authService, loyaltyService),
-        icon: Icon(Icons.check_circle),
+        onPressed: _isSubmitting ? null : () => _finishOrder(cartService, authService, loyaltyService),
+        icon: _isSubmitting
+            ? SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.brown),
+              )
+            : Icon(Icons.check_circle),
         label: Text(
-          'Finalizar Pedido',
+          _isSubmitting ? 'Enviando...' : 'Finalizar Pedido',
           style: TextStyle(fontSize: 18),
         ),
         style: ElevatedButton.styleFrom(
@@ -567,7 +578,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return;
     }
 
-    // Criar o pedido
     final deliveryDateTime = DateTime(
       _selectedDeliveryDate!.year,
       _selectedDeliveryDate!.month,
@@ -576,35 +586,40 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       _selectedDeliveryTime!.minute,
     );
 
-    final order = Order(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      userId: authService.currentUser!.id,
-      items: cartService.items,
-      total: cartService.totalAmount,
-      orderDate: DateTime.now(),
-      deliveryDate: deliveryDateTime,
-      deliveryAddress: _deliveryAddressController.text.trim(),
-      paymentMethod: _paymentMethodLabels[_selectedPaymentMethod],
-      isRecurring: _isRecurring,
-      recurringDays: _isRecurring ? _selectedRecurringDays : null,
-    );
-
-    // Adicionar pontos de fidelidade
+    // Estimativa só para exibição — os pontos de verdade são creditados pelo servidor ao criar o pedido.
     final pointsEarned = (cartService.totalAmount / 5).round();
-    loyaltyService.addPoints(pointsEarned);
 
-    // Limpar carrinho
-    cartService.clear();
+    setState(() => _isSubmitting = true);
+    try {
+      final createdOrder = await Provider.of<OrderService>(context, listen: false).createOrder(
+        items: cartService.items,
+        deliveryAddress: _deliveryAddressController.text.trim(),
+        deliveryDate: deliveryDateTime,
+        paymentMethod: _paymentMethodLabels[_selectedPaymentMethod],
+        isRecurring: _isRecurring,
+        recurringDays: _isRecurring ? _selectedRecurringDays : null,
+      );
 
-    // Navegar para tela de confirmação
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OrderConfirmationScreen(
-          order: order,
-          pointsEarned: pointsEarned,
+      cartService.clear();
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OrderConfirmationScreen(
+            order: createdOrder,
+            pointsEarned: pointsEarned,
+          ),
         ),
-      ),
-    );
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e is ApiException ? e.message : 'Não foi possível finalizar o pedido. Tente novamente.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
   }
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/order.dart';
 import '../services/order_service.dart';
+import '../services/auth_service.dart';
+import '../services/api_client.dart';
 
 class OrderDetailScreen extends StatelessWidget {
   final Order order;
@@ -18,7 +20,11 @@ class OrderDetailScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: () {
-              Provider.of<OrderService>(context, listen: false).refreshOrders();
+              final authService = Provider.of<AuthService>(context, listen: false);
+              if (authService.isAuthenticated) {
+                Provider.of<OrderService>(context, listen: false)
+                    .fetchOrders(authService.currentUser!.id);
+              }
             },
           ),
         ],
@@ -536,17 +542,26 @@ class OrderDetailScreen extends StatelessWidget {
               child: Text('Não'),
             ),
             TextButton(
-              onPressed: () {
-                Provider.of<OrderService>(context, listen: false)
-                    .updateOrderStatus(order.id, OrderStatus.cancelled);
+              onPressed: () async {
+                final orderService = Provider.of<OrderService>(context, listen: false);
                 Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Pedido cancelado com sucesso'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
+                try {
+                  await orderService.cancelOrder(order.id);
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Pedido cancelado com sucesso'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(e is ApiException ? e.message : 'Não foi possível cancelar o pedido.'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
               },
               child: Text('Sim, Cancelar'),
               style: TextButton.styleFrom(foregroundColor: Colors.red),

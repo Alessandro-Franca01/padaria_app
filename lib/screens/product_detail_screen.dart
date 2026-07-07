@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../services/cart_service.dart';
+import '../widgets/product_image.dart';
 import 'cart_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
@@ -35,14 +36,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               decoration: BoxDecoration(
                 color: Colors.grey[200],
               ),
-              child: widget.product.imageUrl.startsWith('assets/')
-                  ? Image.asset(
-                widget.product.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(Icons.image_not_supported, size: 100),
-              )
-                  : Icon(Icons.fastfood, size: 100, color: Colors.brown),
+              child: ProductImage(product: widget.product, iconSize: 100),
             ),
 
             Padding(

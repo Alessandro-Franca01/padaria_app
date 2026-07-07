@@ -17,6 +17,12 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      if (authService.isAuthenticated) {
+        Provider.of<OrderService>(context, listen: false).fetchOrders(authService.currentUser!.id);
+      }
+    });
   }
 
   @override
@@ -61,8 +67,8 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
           return TabBarView(
             controller: _tabController,
             children: [
-              _buildActiveOrders(orderService),
-              _buildOrderHistory(orderService),
+              _buildActiveOrders(orderService, authService),
+              _buildOrderHistory(orderService, authService),
             ],
           );
         },
@@ -103,7 +109,7 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
     );
   }
 
-  Widget _buildActiveOrders(OrderService orderService) {
+  Widget _buildActiveOrders(OrderService orderService, AuthService authService) {
     final activeOrders = orderService.orders
         .where((order) => [
       OrderStatus.pending,
@@ -123,7 +129,7 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
 
     return RefreshIndicator(
       onRefresh: () async {
-        await orderService.refreshOrders();
+        await orderService.fetchOrders(authService.currentUser!.id);
       },
       child: ListView.builder(
         padding: EdgeInsets.all(16),
@@ -147,7 +153,7 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
     );
   }
 
-  Widget _buildOrderHistory(OrderService orderService) {
+  Widget _buildOrderHistory(OrderService orderService, AuthService authService) {
     final historyOrders = orderService.orders
         .where((order) => [
       OrderStatus.completed,
@@ -165,7 +171,7 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
 
     return RefreshIndicator(
       onRefresh: () async {
-        await orderService.refreshOrders();
+        await orderService.fetchOrders(authService.currentUser!.id);
       },
       child: ListView.builder(
         padding: EdgeInsets.all(16),

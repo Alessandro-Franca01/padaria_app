@@ -63,7 +63,9 @@ class Order {
       orderDate: DateTime.parse(json['orderDate']),
       deliveryDate: json['deliveryDate'] != null ? DateTime.parse(json['deliveryDate']) : null,
       deliveryAddress: json['deliveryAddress'],
-      status: OrderStatus.values[json['status'] ?? 0],
+      status: json['status'] != null
+          ? OrderStatus.values.byName(json['status'].toString().toLowerCase())
+          : OrderStatus.pending,
       paymentMethod: json['paymentMethod'],
       isRecurring: json['isRecurring'] ?? false,
       recurringDays: json['recurringDays'] != null 
@@ -81,7 +83,7 @@ class Order {
       'orderDate': orderDate.toIso8601String(),
       'deliveryDate': deliveryDate?.toIso8601String(),
       'deliveryAddress': deliveryAddress,
-      'status': status.index,
+      'status': status.name.toUpperCase(),
       'paymentMethod': paymentMethod,
       'isRecurring': isRecurring,
       'recurringDays': recurringDays,

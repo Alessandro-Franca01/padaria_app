@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../services/product_service.dart';
 import '../services/cart_service.dart';
+import '../widgets/product_image.dart';
 import 'product_detail_screen.dart';
 
 class ProductsScreen extends StatefulWidget {
@@ -163,17 +164,10 @@ class ProductCard extends StatelessWidget {
                   borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                   color: Colors.grey[200],
                 ),
-                child: product.imageUrl.startsWith('assets/')
-                    ? ClipRRect(
+                child: ProductImage(
+                  product: product,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                  child: Image.asset(
-                    product.imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        Icon(Icons.image_not_supported, size: 50),
-                  ),
-                )
-                    : Icon(Icons.fastfood, size: 50, color: Colors.brown),
+                ),
               ),
             ),
             Expanded(

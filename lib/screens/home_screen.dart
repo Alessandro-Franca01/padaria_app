@@ -3,7 +3,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
 import 'package:padaria_app/models/category_item.dart';
 import 'package:padaria_app/models/discount_item.dart';
-import 'package:padaria_app/models/subscription_plan_preview.dart';
 import '../services/cart_service.dart';
 import '../services/order_service.dart';
 import '../widgets/carousel_item.dart';
@@ -75,66 +74,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSubscriptionPlanCard(SubscriptionPlanPreview plan) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      margin: EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: EdgeInsets.all(12),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 100,
-              height: 100,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  plan.imagePath,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    plan.title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    plan.description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'A partir de R\$ ${plan.price.toStringAsFixed(2)}/mês',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.brown,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -504,8 +443,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.grey[600],
                   ),
                 ),
-                SizedBox(height: 16),
-                ...subscriptionPlanPreviews.map((plan) => _buildSubscriptionPlanCard(plan)),
                 SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,

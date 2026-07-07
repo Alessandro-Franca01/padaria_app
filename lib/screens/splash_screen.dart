@@ -5,6 +5,7 @@ import 'dart:async';
 import '../services/auth_service.dart';
 import '../services/product_service.dart';
 import '../services/cart_service.dart';
+import '../services/order_service.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 
@@ -23,23 +24,27 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _initializeApp() async {
     // Atraso para exibir a tela de splash por pelo menos 2 segundos
     await Future.delayed(Duration(seconds: 2));
-    
-    // Tenta fazer login automático com dados salvos
+
     final authService = Provider.of<AuthService>(context, listen: false);
     final productService = Provider.of<ProductService>(context, listen: false);
     final cartService = Provider.of<CartService>(context, listen: false);
-    
-    // Carrega os produtos
-    await productService.refreshProducts();
-    
-    // Tenta fazer login automático
-    final isLoggedIn = await authService.tryAutoLogin();
-    
-    // Se o usuário estiver logado, carrega os dados do carrinho
-    if (isLoggedIn) {
-      await cartService.loadCartFromStorage(productService);
+    final orderService = Provider.of<OrderService>(context, listen: false);
+
+    bool isLoggedIn = false;
+    try {
+      await productService.refreshProducts();
+      isLoggedIn = await authService.tryAutoLogin();
+      if (isLoggedIn) {
+        await cartService.loadCartFromStorage(productService);
+        await orderService.fetchOrders(authService.currentUser!.id);
+      }
+    } catch (e) {
+      // API indisponível no boot — segue para a tela de login em vez de travar o app
+      isLoggedIn = false;
     }
-    
+
+    if (!mounted) return;
+
     // Navega para a tela inicial ou de login
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(

@@ -7,6 +7,7 @@ import '../models/subscription_template.dart';
 import '../models/subscription_plan.dart';
 import 'plan_details_screen.dart';
 import 'plans_screen.dart';
+import '../theme/app_theme.dart';
 
 class SubscriptionPlansListScreen extends StatefulWidget {
   const SubscriptionPlansListScreen({super.key});
@@ -38,18 +39,15 @@ class _SubscriptionPlansListScreenState extends State<SubscriptionPlansListScree
     return Scaffold(
       appBar: AppBar(
         title: const Text('Planos de Assinatura'),
-        backgroundColor: Colors.brown,
         actions: [
-          TextButton(
+          TextButton.icon(
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => PlansScreen()),
               );
             },
-            child: const Text(
-              'Criar',
-              style: TextStyle(color: Colors.white),
-            ),
+            icon: const Icon(Icons.add, size: 18),
+            label: const Text('Criar'),
           ),
         ],
       ),
@@ -61,14 +59,14 @@ class _SubscriptionPlansListScreenState extends State<SubscriptionPlansListScree
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.brown[800],
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
           if (subscriptionService.isLoading)
             const Center(child: CircularProgressIndicator())
           else if (templates.isEmpty)
-            Text('Nenhum plano disponível no momento.', style: TextStyle(color: Colors.grey[600]))
+            Text('Nenhum plano disponível no momento.', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant))
           else
             SizedBox(
               height: 210,
@@ -91,12 +89,12 @@ class _SubscriptionPlansListScreenState extends State<SubscriptionPlansListScree
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.brown[800],
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               Text(
                 '${myPlans.length}',
-                style: TextStyle(color: Colors.grey[700]),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             ],
           ),
@@ -115,13 +113,12 @@ class _SubscriptionPlansListScreenState extends State<SubscriptionPlansListScree
                     const SizedBox(height: 6),
                     const Text('Crie um plano para receber entregas recorrentes.'),
                     const SizedBox(height: 12),
-                    ElevatedButton(
+                    FilledButton(
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => PlansScreen()),
                         );
                       },
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.brown),
                       child: const Text('Criar plano'),
                     ),
                   ],
@@ -143,13 +140,12 @@ class _TemplateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return SizedBox(
       width: 180,
       child: Card(
-        elevation: 3,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppRadii.md),
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => PlansScreen(initialTemplateId: template.id)),
@@ -165,7 +161,7 @@ class _TemplateCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     child: template.imagePath.startsWith('assets/')
                         ? Image.asset(template.imagePath, fit: BoxFit.cover, width: double.infinity)
-                        : Container(color: Colors.brown[50]),
+                        : Container(color: colorScheme.surfaceContainerHighest),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -180,13 +176,13 @@ class _TemplateCard extends StatelessWidget {
                   template.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.grey[700], fontSize: 12),
+                  style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   '${template.products.length} produtos disponíveis',
                   style: TextStyle(
-                    color: Colors.brown[700],
+                    color: colorScheme.primary,
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
                   ),

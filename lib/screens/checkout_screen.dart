@@ -5,6 +5,7 @@ import '../services/auth_service.dart';
 import '../services/loyalty_service.dart';
 import '../services/order_service.dart';
 import '../services/api_client.dart';
+import '../theme/app_theme.dart';
 import 'order_confirmation_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
@@ -66,7 +67,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Finalizar Compra'),
-        backgroundColor: Colors.brown,
       ),
       body: Consumer3<CartService, AuthService, LoyaltyService>(
         builder: (context, cartService, authService, loyaltyService, child) {
@@ -125,8 +125,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _buildOrderSummary(CartService cartService) {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -168,7 +166,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.brown[700],
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ],
@@ -181,8 +179,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _buildDeliveryAddress(AuthService authService) {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -239,8 +235,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _buildDeliveryDateTime() {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -265,10 +259,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           ? '${_selectedDeliveryDate!.day}/${_selectedDeliveryDate!.month}/${_selectedDeliveryDate!.year}'
                           : 'Selecionar Data',
                     ),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.brown[700],
-                      side: BorderSide(color: Colors.brown[300]!),
-                    ),
                   ),
                 ),
                 SizedBox(width: 12),
@@ -280,10 +270,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       _selectedDeliveryTime != null
                           ? '${_selectedDeliveryTime!.hour}:${_selectedDeliveryTime!.minute.toString().padLeft(2, '0')}'
                           : 'Selecionar Hora',
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.brown[700],
-                      side: BorderSide(color: Colors.brown[300]!),
                     ),
                   ),
                 ),
@@ -297,8 +283,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _buildRecurringOrder() {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -315,7 +299,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             Text(
               'Receba seus produtos favoritos automaticamente nos dias selecionados',
               style: TextStyle(
-                color: Colors.grey[600],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
               ),
             ),
@@ -331,7 +315,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   }
                 });
               },
-              activeColor: Colors.brown[700],
+              contentPadding: EdgeInsets.zero,
             ),
             if (_isRecurring) ...[
               SizedBox(height: 12),
@@ -359,7 +343,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           }
                         });
                       },
-                      selectedColor: Colors.brown[300],
                     ),
                   );
                 }).toList(),
@@ -373,8 +356,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _buildPaymentMethod() {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -398,7 +379,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     _selectedPaymentMethod = value!;
                   });
                 },
-                activeColor: Colors.brown[700],
+                contentPadding: EdgeInsets.zero,
               );
             }).toList(),
           ],
@@ -409,8 +390,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _buildLoyaltyProgram(LoyaltyService loyaltyService, double totalAmount) {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -435,8 +414,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             Text(
               'Com esta compra você ganhará: ${(totalAmount / 5).round()} pontos',
               style: TextStyle(
-                color: Colors.green[700],
-                fontWeight: FontWeight.w500,
+                color: AppColors.success,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -447,8 +426,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   Widget _buildObservations() {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -479,29 +456,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildFinishButton(CartService cartService, AuthService authService, LoyaltyService loyaltyService) {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton.icon(
-        onPressed: _isSubmitting ? null : () => _finishOrder(cartService, authService, loyaltyService),
-        icon: _isSubmitting
-            ? SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.brown),
-              )
-            : Icon(Icons.check_circle),
-        label: Text(
-          _isSubmitting ? 'Enviando...' : 'Finalizar Pedido',
-          style: TextStyle(fontSize: 18),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white30,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
+    return FilledButton.icon(
+      onPressed: _isSubmitting ? null : () => _finishOrder(cartService, authService, loyaltyService),
+      icon: _isSubmitting
+          ? SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+            )
+          : Icon(Icons.check_circle),
+      label: Text(_isSubmitting ? 'Enviando...' : 'Finalizar Pedido'),
     );
   }
 
@@ -511,16 +480,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       initialDate: DateTime.now().add(Duration(days: 1)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(Duration(days: 30)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Colors.brown[700]!,
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (picked != null) {
@@ -534,16 +493,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: 8, minute: 0),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Colors.brown[700]!,
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (picked != null) {
@@ -562,7 +511,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Por favor, selecione data e hora de entrega'),
-          backgroundColor: Colors.orange,
+          backgroundColor: AppColors.warning,
         ),
       );
       return;
@@ -572,7 +521,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Selecione pelo menos um dia para o pedido recorrente'),
-          backgroundColor: Colors.orange,
+          backgroundColor: AppColors.warning,
         ),
       );
       return;
@@ -615,7 +564,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e is ApiException ? e.message : 'Não foi possível finalizar o pedido. Tente novamente.'),
-          backgroundColor: Colors.red,
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     } finally {

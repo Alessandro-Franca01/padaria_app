@@ -73,7 +73,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return Scaffold(
             appBar: AppBar(
               title: Text('Meu Perfil'),
-              backgroundColor: Colors.brown,
             ),
             body: Center(
               child: Text('Faça login para visualizar seu perfil.'),
@@ -84,7 +83,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Scaffold(
           appBar: AppBar(
             title: Text('Meu Perfil'),
-            backgroundColor: Colors.brown,
             actions: [
               IconButton(
                 icon: Icon(Icons.logout),
@@ -99,21 +97,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   child: Padding(
                     padding: EdgeInsets.all(16),
                     child: Row(
                       children: [
                         CircleAvatar(
                           radius: 32,
-                          backgroundColor: Colors.brown[200],
+                          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                           child: Text(
                             user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: Colors.brown[900],
+                              color: Theme.of(context).colorScheme.onPrimaryContainer,
                             ),
                           ),
                         ),
@@ -127,11 +123,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               SizedBox(height: 4),
-                              Text(user.email),
+                              Text(
+                                user.email,
+                                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                              ),
                               SizedBox(height: 8),
                               Row(
                                 children: [
-                                  Icon(Icons.loyalty, color: Colors.orangeAccent),
+                                  Icon(Icons.loyalty, color: Colors.amber[700], size: 20),
                                   SizedBox(width: 8),
                                   Text('${user.loyaltyPoints} pontos de fidelidade'),
                                 ],
@@ -146,7 +145,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 24),
                 Text(
                   'Informações do Perfil',
-                  style: Theme.of(context).textTheme.displayMedium,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
                 SizedBox(height: 12),
                 Form(
@@ -205,17 +204,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         maxLines: 2,
                       ),
                       SizedBox(height: 24),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          icon: Icon(Icons.save),
-                          label: Text('Salvar alterações'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.brown[700],
-                            padding: EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          onPressed: authService.isLoading ? null : _saveProfile,
-                        ),
+                      FilledButton.icon(
+                        icon: Icon(Icons.save_outlined),
+                        label: Text('Salvar alterações'),
+                        onPressed: authService.isLoading ? null : _saveProfile,
                       ),
                     ],
                   ),

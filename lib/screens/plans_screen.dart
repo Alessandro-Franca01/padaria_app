@@ -8,6 +8,7 @@ import '../models/cart_item.dart';
 import '../models/product.dart';
 import '../models/subscription_plan.dart';
 import '../models/subscription_template.dart';
+import '../theme/app_theme.dart';
 import 'plan_details_screen.dart';
 
 class PlansScreen extends StatefulWidget {
@@ -200,7 +201,7 @@ class _PlansScreenState extends State<PlansScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e is ApiException ? e.message : 'Não foi possível salvar o plano.'),
-          backgroundColor: Colors.red,
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     } finally {
@@ -209,8 +210,9 @@ class _PlansScreenState extends State<PlansScreen> {
   }
 
   Widget _buildTemplatePicker(List<SubscriptionTemplate> templates) {
+    final colorScheme = Theme.of(context).colorScheme;
     if (templates.isEmpty) {
-      return Text('Nenhum plano disponível no momento.', style: TextStyle(color: Colors.grey[600]));
+      return Text('Nenhum plano disponível no momento.', style: TextStyle(color: colorScheme.onSurfaceVariant));
     }
     return SizedBox(
       height: 130,
@@ -222,13 +224,16 @@ class _PlansScreenState extends State<PlansScreen> {
           final selected = _selectedTemplate?.id == template.id;
           return Card(
             margin: EdgeInsets.only(right: 12),
-            color: selected ? Colors.brown[100] : null,
+            color: selected ? colorScheme.primaryContainer : null,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-              side: BorderSide(color: selected ? Colors.brown : Colors.transparent, width: 2),
+              borderRadius: BorderRadius.circular(AppRadii.md),
+              side: BorderSide(
+                color: selected ? colorScheme.primary : colorScheme.outlineVariant.withOpacity(0.5),
+                width: selected ? 2 : 1,
+              ),
             ),
             child: InkWell(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(AppRadii.md),
               onTap: () => _selectTemplate(template),
               child: Container(
                 width: 160,
@@ -240,14 +245,14 @@ class _PlansScreenState extends State<PlansScreen> {
                     SizedBox(height: 4),
                     Text(
                       template.description,
-                      style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                      style: TextStyle(fontSize: 12, color: colorScheme.onSurfaceVariant),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Spacer(),
                     Text(
                       '${template.products.length} produtos disponíveis',
-                      style: TextStyle(fontSize: 11, color: Colors.brown[700]),
+                      style: TextStyle(fontSize: 11, color: colorScheme.primary, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -274,7 +279,7 @@ class _PlansScreenState extends State<PlansScreen> {
                 borderRadius: BorderRadius.circular(8),
                 child: product.imageUrl.startsWith('assets/')
                     ? Image.asset(product.imageUrl, fit: BoxFit.cover)
-                    : Icon(Icons.fastfood, color: Colors.brown),
+                    : Icon(Icons.fastfood, color: Theme.of(context).colorScheme.primary),
               ),
             ),
             SizedBox(width: 12),
@@ -289,7 +294,7 @@ class _PlansScreenState extends State<PlansScreen> {
               ),
             ),
             IconButton(
-              icon: Icon(selected ? Icons.check_circle : Icons.add_circle_outline, color: Colors.brown),
+              icon: Icon(selected ? Icons.check_circle : Icons.add_circle_outline, color: Theme.of(context).colorScheme.primary),
               onPressed: () {
                 setState(() {
                   _selectedQuantities[product.productId] = selected ? 0 : 1;
@@ -332,7 +337,6 @@ class _PlansScreenState extends State<PlansScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.editingPlan != null ? 'Editar Plano' : 'Plano de Assinatura'),
-        backgroundColor: Colors.brown,
       ),
       body: Consumer<SubscriptionService>(
         builder: (context, subscriptionService, child) {
@@ -370,7 +374,6 @@ class _PlansScreenState extends State<PlansScreen> {
                     return ChoiceChip(
                       label: Text(d),
                       selected: selected,
-                      selectedColor: Colors.brown[200],
                       onSelected: (val) {
                         setState(() {
                           if (val) {
@@ -390,19 +393,26 @@ class _PlansScreenState extends State<PlansScreen> {
                   children: [
                     Expanded(
                       child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                        padding: EdgeInsets.symmetric(vertical: 14, horizontal: 12),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black12),
-                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
+                          borderRadius: BorderRadius.circular(AppRadii.sm),
                         ),
-                        child: Text(_time.isEmpty ? 'Selecione o horário' : _time),
+                        child: Text(
+                          _time.isEmpty ? 'Selecione o horário' : _time,
+                          style: TextStyle(
+                            color: _time.isEmpty
+                                ? Theme.of(context).colorScheme.onSurfaceVariant
+                                : Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
                       ),
                     ),
                     SizedBox(width: 8),
-                    ElevatedButton(
+                    FilledButton.tonalIcon(
                       onPressed: _pickTime,
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.white30),
-                      child: Text('Escolher'),
+                      icon: Icon(Icons.access_time),
+                      label: Text('Escolher'),
                     ),
                   ],
                 ),
@@ -411,14 +421,10 @@ class _PlansScreenState extends State<PlansScreen> {
                 SizedBox(height: 8),
                 Align(
                   alignment: Alignment.center,
-                  child: ElevatedButton.icon(
+                  child: OutlinedButton.icon(
                     onPressed: _useUserAddress,
-                    icon: Icon(Icons.person_pin_circle),
+                    icon: Icon(Icons.person_pin_circle_outlined),
                     label: Text('Usar endereço do perfil'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white30,
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    ),
                   ),
                 ),
                 SizedBox(height: 8),
@@ -435,10 +441,8 @@ class _PlansScreenState extends State<PlansScreen> {
                     Switch(
                       value: _active,
                       onChanged: (v) => setState(() => _active = v),
-                      activeColor: Colors.brown,
-                      inactiveThumbColor: Colors.brown[200],
-                      inactiveTrackColor: Colors.brown[100],
                     ),
+                    SizedBox(width: 4),
                     Text('Plano ativo'),
                   ],
                 ),
@@ -465,15 +469,19 @@ class _PlansScreenState extends State<PlansScreen> {
                   ),
                 ),
                 SizedBox(height: 16),
-                ElevatedButton(
+                FilledButton(
                   onPressed: _isSaving ? null : () => _savePlan(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown[200],
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                    textStyle: TextStyle(fontSize: 18),
-                  ),
                   child: _isSaving
-                      ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                        )
                       : Text('Salvar Plano'),
                 ),
               ],

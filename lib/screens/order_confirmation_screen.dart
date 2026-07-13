@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/order.dart';
+import '../theme/app_theme.dart';
 import 'orders_screen.dart';
 
 class OrderConfirmationScreen extends StatelessWidget {
@@ -24,46 +25,41 @@ class OrderConfirmationScreen extends StatelessWidget {
                   children: [
                     // Ícone de sucesso
                     Container(
-                      width: 120,
-                      height: 120,
+                      width: 110,
+                      height: 110,
                       decoration: BoxDecoration(
-                        color: Colors.green,
+                        color: AppColors.successContainer,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        Icons.check,
-                        color: Colors.white,
-                        size: 80,
+                        Icons.check_rounded,
+                        color: AppColors.success,
+                        size: 64,
                       ),
                     ),
                     SizedBox(height: 32),
                     // Título
                     Text(
                       'Pedido Confirmado!',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.brown[800],
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 16),
+                    SizedBox(height: 12),
                     // Subtítulo
                     Text(
                       'Seu pedido foi recebido com sucesso',
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.grey[600],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 32),
                     // Card com informações do pedido
                     Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
                       child: Padding(
                         padding: EdgeInsets.all(20),
                         child: Column(
@@ -177,7 +173,7 @@ class OrderConfirmationScreen extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
@@ -189,56 +185,29 @@ class OrderConfirmationScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => OrdersScreen(),
-                          ),
-                        );
-                      },
-                      icon: Icon(Icons.receipt_long, color: Colors.amber,),
-                      label: Text(
-                        'Ver Meus Pedidos',
-                        style: TextStyle(fontSize: 16, color: Colors.amber),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.brown[700],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                  FilledButton.icon(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OrdersScreen(),
                         ),
-                      ),
-                    ),
+                      );
+                    },
+                    icon: Icon(Icons.receipt_long),
+                    label: Text('Ver Meus Pedidos'),
                   ),
                   SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/',
-                          (route) => false,
-                        );
-                      },
-                      icon: Icon(Icons.home),
-                      label: Text(
-                        'Voltar ao Início',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.brown[700],
-                        side: BorderSide(color: Colors.brown[700]!),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        '/',
+                        (route) => false,
+                      );
+                    },
+                    icon: Icon(Icons.home_outlined),
+                    label: Text('Voltar ao Início'),
                   ),
                 ],
               ),
@@ -250,6 +219,7 @@ class OrderConfirmationScreen extends StatelessWidget {
   }
 
   Widget _buildInfoRow(String label, String value) {
+    return Builder(builder: (context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,7 +228,7 @@ class OrderConfirmationScreen extends StatelessWidget {
           label,
           style: TextStyle(
             fontWeight: FontWeight.w500,
-            color: Colors.grey[700],
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
         SizedBox(width: 16),
@@ -273,5 +243,6 @@ class OrderConfirmationScreen extends StatelessWidget {
         ),
       ],
     );
+    });
   }
 }

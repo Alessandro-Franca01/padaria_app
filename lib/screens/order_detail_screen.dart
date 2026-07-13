@@ -4,6 +4,7 @@ import '../models/order.dart';
 import '../services/order_service.dart';
 import '../services/auth_service.dart';
 import '../services/api_client.dart';
+import '../theme/app_theme.dart';
 
 class OrderDetailScreen extends StatelessWidget {
   final Order order;
@@ -15,7 +16,6 @@ class OrderDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Pedido #${order.id.substring(0, 8)}'),
-        backgroundColor: Colors.brown,
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
@@ -45,7 +45,7 @@ class OrderDetailScreen extends StatelessWidget {
             SizedBox(height: 16),
 
             // Itens do pedido
-            _buildOrderItems(),
+            _buildOrderItems(context),
 
             SizedBox(height: 16),
 
@@ -74,8 +74,6 @@ class OrderDetailScreen extends StatelessWidget {
 
   Widget _buildStatusCard() {
     return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.all(20),
@@ -123,8 +121,6 @@ class OrderDetailScreen extends StatelessWidget {
 
   Widget _buildOrderInfo() {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -147,10 +143,9 @@ class OrderDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOrderItems() {
+  Widget _buildOrderItems(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -180,7 +175,7 @@ class OrderDetailScreen extends StatelessWidget {
                     height: 60,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: Colors.grey[200],
+                      color: colorScheme.surfaceContainerHighest,
                     ),
                     child: item.product.imageUrl.startsWith('assets/')
                         ? ClipRRect(
@@ -192,7 +187,7 @@ class OrderDetailScreen extends StatelessWidget {
                             Icon(Icons.image_not_supported),
                       ),
                     )
-                        : Icon(Icons.fastfood, color: Colors.brown),
+                        : Icon(Icons.fastfood, color: colorScheme.primary),
                   ),
                   SizedBox(width: 12),
                   // Informações do item
@@ -242,7 +237,7 @@ class OrderDetailScreen extends StatelessWidget {
                         'R\$ ${item.totalPrice.toStringAsFixed(2)}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.brown[700],
+                          color: colorScheme.primary,
                           fontSize: 16,
                         ),
                       ),
@@ -259,8 +254,6 @@ class OrderDetailScreen extends StatelessWidget {
 
   Widget _buildDeliveryInfo() {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -284,8 +277,6 @@ class OrderDetailScreen extends StatelessWidget {
 
   Widget _buildPaymentInfo() {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -309,8 +300,6 @@ class OrderDetailScreen extends StatelessWidget {
 
   Widget _buildRecurringInfo() {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(16),
         child: Column(
@@ -373,23 +362,18 @@ class OrderDetailScreen extends StatelessWidget {
   Widget _buildActionButtons(BuildContext context) {
     List<Widget> buttons = [];
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     // Botão de cancelar pedido (apenas para pedidos ativos)
     if ([OrderStatus.pending, OrderStatus.confirmed].contains(order.status)) {
       buttons.add(
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: OutlinedButton.icon(
-            onPressed: () => _showCancelDialog(context),
-            icon: Icon(Icons.cancel),
-            label: Text('Cancelar Pedido'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.red,
-              side: BorderSide(color: Colors.red),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
+        OutlinedButton.icon(
+          onPressed: () => _showCancelDialog(context),
+          icon: Icon(Icons.cancel_outlined),
+          label: Text('Cancelar Pedido'),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: colorScheme.error,
+            side: BorderSide(color: colorScheme.error),
           ),
         ),
       );
@@ -399,20 +383,10 @@ class OrderDetailScreen extends StatelessWidget {
     // Botão de reordenar (para pedidos concluídos)
     if (order.status == OrderStatus.completed) {
       buttons.add(
-        SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton.icon(
-            onPressed: () => _reorderItems(context),
-            icon: Icon(Icons.refresh),
-            label: Text('Fazer Pedido Novamente'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.brown[700],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
+        FilledButton.icon(
+          onPressed: () => _reorderItems(context),
+          icon: Icon(Icons.refresh),
+          label: Text('Fazer Pedido Novamente'),
         ),
       );
       buttons.add(SizedBox(height: 12));
@@ -420,21 +394,10 @@ class OrderDetailScreen extends StatelessWidget {
 
     // Botão de suporte
     buttons.add(
-      SizedBox(
-        width: double.infinity,
-        height: 50,
-        child: OutlinedButton.icon(
-          onPressed: () => _contactSupport(context),
-          icon: Icon(Icons.help_outline),
-          label: Text('Entrar em Contato'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.brown[700],
-            side: BorderSide(color: Colors.brown[300]!),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
+      OutlinedButton.icon(
+        onPressed: () => _contactSupport(context),
+        icon: Icon(Icons.help_outline),
+        label: Text('Entrar em Contato'),
       ),
     );
 
@@ -551,14 +514,14 @@ class OrderDetailScreen extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('Pedido cancelado com sucesso'),
-                      backgroundColor: Colors.green,
+                      backgroundColor: AppColors.success,
                     ),
                   );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(e is ApiException ? e.message : 'Não foi possível cancelar o pedido.'),
-                      backgroundColor: Colors.red,
+                      backgroundColor: Theme.of(context).colorScheme.error,
                     ),
                   );
                 }
@@ -577,7 +540,7 @@ class OrderDetailScreen extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Itens adicionados ao carrinho!'),
-        backgroundColor: Colors.green,
+        backgroundColor: AppColors.success,
         action: SnackBarAction(
           label: 'Ver Carrinho',
           onPressed: () {

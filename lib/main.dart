@@ -10,6 +10,7 @@ import 'services/loyalty_service.dart';
 import 'services/order_service.dart';
 import 'services/chat_service.dart';
 import 'services/subscription_service.dart';
+import 'theme/app_theme.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -47,19 +48,8 @@ class MyApp extends StatelessWidget {
           '/login': (context) => LoginScreen(),
         },
         title: 'Padaria App',
-        theme: ThemeData(
-          primarySwatch: Colors.brown,
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.brown).copyWith(
-            secondary: Colors.orangeAccent,
-          ),
-          fontFamily: 'Roboto',
-          textTheme: TextTheme(
-            displayLarge: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.brown),
-            displayMedium: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.brown[700]),
-            bodyLarge: TextStyle(fontSize: 16.0, color: Colors.black87),
-            bodyMedium: TextStyle(fontSize: 14.0, color: Colors.black54),
-          ),
-        ),
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
         home: SplashScreen(), // Set SplashScreen as the initial route
       ),
     );

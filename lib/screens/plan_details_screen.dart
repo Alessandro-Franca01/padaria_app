@@ -12,10 +12,9 @@ class PlanDetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Detalhes do Plano'),
-        backgroundColor: Colors.brown,
         actions: [
           IconButton(
-            icon: Icon(Icons.edit),
+            icon: Icon(Icons.edit_outlined),
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (ctx) => PlansScreen(editingPlan: plan)),
@@ -31,12 +30,12 @@ class PlanDetailsScreen extends StatelessWidget {
           children: [
             Text(
               'Plano de Assinatura',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.brown),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
             ),
             SizedBox(height: 16),
             Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               child: Padding(
                 padding: EdgeInsets.all(16),
                 child: Column(
@@ -44,7 +43,7 @@ class PlanDetailsScreen extends StatelessWidget {
                   children: [
                     Text(
                       plan.templateName,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.brown),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),
                     ),
                     SizedBox(height: 8),
                     _buildDetailRow('Status:', plan.active ? 'Ativo' : 'Inativo'),
@@ -71,17 +70,12 @@ class PlanDetailsScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 24),
-            Center(
-              child: ElevatedButton(
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
                 onPressed: () {
                   Navigator.of(context).pop(); // Volta para a tela anterior
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.brown.shade200,
-                  foregroundColor: Colors.brown.shade900,
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                  textStyle: TextStyle(fontSize: 18),
-                ),
                 child: Text('Voltar'),
               ),
             ),

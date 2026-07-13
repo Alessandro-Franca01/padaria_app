@@ -13,6 +13,7 @@ import 'package:padaria_app/models/order.dart';
 import 'chat_screen.dart';
 import 'profile_screen.dart';
 import 'subscription_plans_list_screen.dart';
+import '../theme/app_theme.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -30,11 +31,20 @@ class _HomeScreenState extends State<HomeScreen> {
     _pageController.jumpToPage(index);
   }
 
+  /// Título de seção padronizado da Home.
+  Widget _sectionTitle(BuildContext context, String text) {
+    return Text(
+      text,
+      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+    );
+  }
+
   Widget _buildDiscountItem(DiscountItem discount) {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          print('Tag selecionada: ${discount.description}');
           // Navegar para produtos com desconto
           Navigator.push(
             context,
@@ -44,10 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
         child: Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
           child: Padding(
             padding: EdgeInsets.all(8),
             child: Column(
@@ -62,12 +68,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(height: 4),
+                SizedBox(height: 6),
                 Text(
                   discount.description,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey[600],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -84,10 +90,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Padaria App'),
-        backgroundColor: Colors.brown,
         actions: [
           IconButton(
-            icon: Icon(Icons.chat),
+            icon: Icon(Icons.chat_bubble_outline),
             onPressed: () {
               Navigator.push(
                 context,
@@ -170,58 +175,39 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 // Header
                 Text(
-                  'Bem-vindo!',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.brown,
-                  ),
+                  'Bem-vindo! 👋',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 6),
                 Text(
                   'Descubra os principais produtos e ofertas!',
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
+                    fontSize: 15,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 20),
 
                 // Botão Ver Todos os Produtos
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProductsScreen(),
-                        ),
-                      );
-                    },
-                    icon: Icon(Icons.store),
-                    label: Text('Ver Todos os Produtos'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white30,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                FilledButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProductsScreen(),
                       ),
-                    ),
-                  ),
+                    );
+                  },
+                  icon: Icon(Icons.storefront_outlined),
+                  label: Text('Ver Todos os Produtos'),
                 ),
 
-                SizedBox(height: 24),
+                SizedBox(height: 28),
 
                 // Seção Destaques
-                Text(
-                  'Destaques',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.brown,
-                  ),
-                ),
+                _sectionTitle(context, 'Destaques'),
                 SizedBox(height: 12),
                 CarouselSlider.builder(
                   itemCount: carouselItems.length,
@@ -242,28 +228,37 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                       child: Card(
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
+                        child: Stack(
+                          fit: StackFit.expand,
                           children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                              child: Image.asset(
-                                carouselItems[index].imagePath,
-                                height: 120,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
+                            Image.asset(
+                              carouselItems[index].imagePath,
+                              fit: BoxFit.cover,
+                            ),
+                            // Gradiente para legibilidade do texto sobre a imagem
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.65),
+                                  ],
+                                  stops: const [0.45, 1.0],
+                                ),
                               ),
                             ),
-                            Padding(
-                              padding: EdgeInsets.all(8),
+                            Positioned(
+                              left: 14,
+                              right: 14,
+                              bottom: 12,
                               child: Text(
                                 carouselItems[index].title,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                style: const TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
                                 ),
                               ),
                             ),
@@ -274,203 +269,119 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
 
-                SizedBox(height: 24),
-                Divider(),
-                SizedBox(height: 16),
+                SizedBox(height: 28),
 
                 // Seção Promoções
-                Text(
-                  'Promoções Exclusivas do App',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
-                          child: Text(
-                            'Promoções e Descontos',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.brown,
-                            ),
-                          ),
+                _sectionTitle(context, 'Promoções e Descontos'),
+                SizedBox(height: 12),
+                SizedBox(
+                  height: 150,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: (DiscountItems.length / 3).ceil(),
+                    itemBuilder: (context, index) {
+                      return Container(
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        margin: EdgeInsets.only(right: 12),
+                        child: Row(
+                          children: [
+                            _buildDiscountItem(DiscountItems[index * 3]),
+                            SizedBox(width: 12),
+                            if (index * 3 + 1 < DiscountItems.length)
+                              _buildDiscountItem(DiscountItems[index * 3 + 1]),
+                            SizedBox(width: 12),
+                            if (index * 3 + 2 < DiscountItems.length)
+                              _buildDiscountItem(DiscountItems[index * 3 + 2]),
+                          ],
                         ),
-                        SizedBox(
-                          height: 150,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            itemCount: (DiscountItems.length / 3).ceil(),
-                            itemBuilder: (context, index) {
-                              return Container(
-                                width: MediaQuery.of(context).size.width * 0.9,
-                                margin: EdgeInsets.only(right: 12),
-                                child: Row(
-                                  children: [
-                                    _buildDiscountItem(DiscountItems[index * 3]),
-                                    SizedBox(width: 12),
-                                    if (index * 3 + 1 < DiscountItems.length)
-                                      _buildDiscountItem(DiscountItems[index * 3 + 1]),
-                                    SizedBox(width: 12),
-                                    if (index * 3 + 2 < DiscountItems.length)
-                                      _buildDiscountItem(DiscountItems[index * 3 + 2]),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
 
-                SizedBox(height: 24),
-                Divider(),
-                SizedBox(height: 16),
+                SizedBox(height: 28),
 
                 // Seção Categorias
-                Text(
-                  'Nossas Especialidades',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                _sectionTitle(context, 'Nossas Especialidades'),
+                SizedBox(height: 12),
+                GridView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 0.8,
                   ),
-                ),
-                SizedBox(height: 8),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
-                      child: Text(
-                        'Categorias',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.brown,
-                        ),
-                      ),
-                    ),
-                    GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      padding: EdgeInsets.all(16),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 0.8,
-                      ),
-                      itemCount: categories.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProductsScreen(
-                                  category: categories[index].category,
-                                ),
-                              ),
-                            );
-                          },
-                          child: Card(
-                            elevation: 3,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                                    child: Image.asset(
-                                      categories[index].imagePath,
-                                      height: 120,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8),
-                                  child: Text(
-                                    categories[index].title,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductsScreen(
+                              category: categories[index].category,
                             ),
                           ),
                         );
                       },
-                    ),
-                  ],
+                      child: Card(
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.md)),
+                                child: Image.asset(
+                                  categories[index].imagePath,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Text(
+                                categories[index].title,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
 
-                SizedBox(height: 24),
-                Divider(),
-                SizedBox(height: 16),
+                SizedBox(height: 28),
 
                 // Seção Assinaturas
-                Text(
-                  'Assinaturas da Padaria',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.brown,
-                  ),
-                ),
-                SizedBox(height: 8),
+                _sectionTitle(context, 'Assinaturas da Padaria'),
+                SizedBox(height: 6),
                 Text(
                   'Receba seus produtos favoritos toda semana com desconto.',
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
+                    fontSize: 15,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
                 SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SubscriptionPlansListScreen(),
-                        ),
-                      );
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Colors.brown),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                OutlinedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SubscriptionPlansListScreen(),
                       ),
-                    ),
-                    child: Text(
-                      'Ver todos os planos',
-                      style: TextStyle(
-                        color: Colors.brown,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
+                    );
+                  },
+                  child: Text('Ver todos os planos'),
                 ),
+                SizedBox(height: 8),
               ],
             ),
           ),
@@ -484,23 +395,21 @@ class _HomeScreenState extends State<HomeScreen> {
           CartScreen(),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        backgroundColor: Colors.brown,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: _onItemTapped,
+        destinations: [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
             label: 'Início',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event_available),
+          NavigationDestination(
+            icon: Icon(Icons.event_available_outlined),
+            selectedIcon: Icon(Icons.event_available),
             label: 'Planos',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Consumer<OrderService>(
               builder: (context, orderService, child) {
                 final activeOrders = orderService.orders.where((order) => [
@@ -510,77 +419,30 @@ class _HomeScreenState extends State<HomeScreen> {
                   OrderStatus.delivery,
                 ].contains(order.status)).length;
 
-                return Stack(
-                  children: [
-                    Icon(Icons.receipt_long),
-                    if (activeOrders > 0)
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          padding: EdgeInsets.all(1),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          constraints: BoxConstraints(
-                            minWidth: 12,
-                            minHeight: 12,
-                          ),
-                          child: Text(
-                            '$activeOrders',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 8,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                  ],
+                return Badge(
+                  isLabelVisible: activeOrders > 0,
+                  label: Text('$activeOrders'),
+                  child: Icon(Icons.receipt_long_outlined),
                 );
               },
             ),
+            selectedIcon: Icon(Icons.receipt_long),
             label: 'Pedidos',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Consumer<CartService>(
               builder: (context, cartService, child) {
-                return Stack(
-                  children: [
-                    Icon(Icons.shopping_cart),
-                    if (cartService.itemCount > 0)
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          padding: EdgeInsets.all(1),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          constraints: BoxConstraints(
-                            minWidth: 12,
-                            minHeight: 12,
-                          ),
-                          child: Text(
-                            '${cartService.itemCount}',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 8,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                  ],
+                return Badge(
+                  isLabelVisible: cartService.itemCount > 0,
+                  label: Text('${cartService.itemCount}'),
+                  child: Icon(Icons.shopping_cart_outlined),
                 );
               },
             ),
+            selectedIcon: Icon(Icons.shopping_cart),
             label: 'Carrinho',
           ),
         ],
-        //selectedItemColor: Colors.white,
       ),
     );
   }

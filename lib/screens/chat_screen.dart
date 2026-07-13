@@ -42,7 +42,7 @@ class _ChatScreenState extends State<ChatScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e is ApiException ? e.message : 'Não foi possível enviar a mensagem.'),
-          backgroundColor: Colors.red,
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     }
@@ -50,26 +50,38 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildMessage(ChatMessage message) {
     final isUser = message.sender == MessageSender.user;
+    final colorScheme = Theme.of(context).colorScheme;
+    final bubbleColor = isUser ? colorScheme.primary : colorScheme.surfaceContainerHighest;
+    final textColor = isUser ? colorScheme.onPrimary : colorScheme.onSurface;
+    final timeColor = isUser
+        ? colorScheme.onPrimary.withOpacity(0.7)
+        : colorScheme.onSurfaceVariant;
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.78),
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 12),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 14),
         decoration: BoxDecoration(
-          color: isUser ? Colors.brown[300] : Colors.grey[300],
-          borderRadius: BorderRadius.circular(12),
+          color: bubbleColor,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.circular(16),
+            bottomLeft: Radius.circular(isUser ? 16 : 4),
+            bottomRight: Radius.circular(isUser ? 4 : 16),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               message.content,
-              style: TextStyle(color: Colors.black87),
+              style: TextStyle(color: textColor),
             ),
             SizedBox(height: 4),
             Text(
               message.formattedTime,
-              style: TextStyle(fontSize: 10, color: Colors.black54),
+              style: TextStyle(fontSize: 10, color: timeColor),
             ),
           ],
         ),
@@ -82,7 +94,6 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Chat com a Padaria'),
-        backgroundColor: Colors.brown,
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
@@ -111,30 +122,34 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               boxShadow: [
-                BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, -2)),
+                BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 4, offset: Offset(0, -2)),
               ],
             ),
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: 'Digite sua mensagem',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: EdgeInsets.fromLTRB(12, 8, 8, 8),
+            child: SafeArea(
+              top: false,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      textInputAction: TextInputAction.send,
+                      onSubmitted: (_) => _sendMessage(),
+                      decoration: InputDecoration(
+                        hintText: 'Digite sua mensagem',
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(width: 8),
-                IconButton(
-                  icon: Icon(Icons.send, color: Colors.brown),
-                  onPressed: _sendMessage,
-                ),
-              ],
+                  SizedBox(width: 8),
+                  IconButton.filled(
+                    icon: Icon(Icons.send),
+                    onPressed: _sendMessage,
+                  ),
+                ],
+              ),
             ),
           ),
         ],

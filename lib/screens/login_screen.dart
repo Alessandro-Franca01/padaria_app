@@ -58,32 +58,47 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
     final isLoading = authService.isLoading;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Icon(
-                  Icons.bakery_dining,
-                  size: 80,
-                  color: Colors.brown[700],
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Bem-vindo à Padaria App',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.brown[800],
+                // Marca
+                Container(
+                  height: 88,
+                  width: 88,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    shape: BoxShape.circle,
                   ),
+                  child: Icon(
+                    Icons.bakery_dining,
+                    size: 46,
+                    color: colorScheme.onPrimaryContainer,
+                  ),
+                ),
+                SizedBox(height: 24),
+                Text(
+                  'Bem-vindo de volta',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 40),
+                SizedBox(height: 6),
+                Text(
+                  'Entre para continuar na Padaria',
+                  style: TextStyle(fontSize: 15, color: colorScheme.onSurfaceVariant),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 36),
                 Form(
                   key: _formKey,
                   child: Column(
@@ -158,25 +173,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
-                      ElevatedButton(
+                      SizedBox(height: 24),
+                      FilledButton(
                         onPressed: isLoading ? null : _submitForm,
                         child: isLoading
-                            ? CircularProgressIndicator(
-                                valueColor:
-                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                            ? SizedBox(
+                                height: 22,
+                                width: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Theme.of(context).colorScheme.onPrimary,
+                                  ),
+                                ),
                               )
-                            : Text(
-                                'Entrar',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.brown[700],
-                          padding: EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
+                            : Text('Entrar'),
                       ),
                     ],
                   ),
@@ -193,12 +204,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: RichText(
                     text: TextSpan(
                       text: 'Não tem uma conta? ',
-                      style: TextStyle(color: Colors.black54),
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       children: [
                         TextSpan(
                           text: 'Cadastre-se',
                           style: TextStyle(
-                            color: Colors.brown[700],
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -214,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
                         'Ou entre com',
-                        style: TextStyle(color: Colors.black54),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
                     ),
                     Expanded(child: Divider()),

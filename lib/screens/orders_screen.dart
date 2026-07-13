@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/order.dart';
 import '../services/order_service.dart';
 import '../services/auth_service.dart';
+import '../theme/app_theme.dart';
 import 'order_detail_screen.dart';
 
 class OrdersScreen extends StatefulWidget {
@@ -36,12 +37,8 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
     return Scaffold(
       appBar: AppBar(
         title: Text('Meus Pedidos'),
-        backgroundColor: Colors.brown,
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.brown[200],
-          labelColor: Colors.brown[50],
-          unselectedLabelColor: Colors.white70,
           tabs: [
             Tab(
               icon: Icon(Icons.pending_actions),
@@ -77,35 +74,40 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
   }
 
   Widget _buildNotAuthenticated() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.login,
-            size: 80,
-            color: Colors.grey[400],
-          ),
-          SizedBox(height: 24),
-          Text(
-            'Faça login para ver seus pedidos',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[600],
+    return Builder(
+      builder: (context) {
+        final colorScheme = Theme.of(context).colorScheme;
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.all(32),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.login,
+                  size: 72,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  'Faça login para ver seus pedidos',
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                SizedBox(height: 24),
+                FilledButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
+                  child: Text('Fazer Login'),
+                ),
+              ],
             ),
           ),
-          SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/login');
-            },
-            child: Text('Fazer Login'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.brown[700],
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -200,35 +202,50 @@ class _OrdersScreenState extends State<OrdersScreen> with TickerProviderStateMix
     required String title,
     required String subtitle,
   }) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 80,
-            color: Colors.grey[400],
-          ),
-          SizedBox(height: 24),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
+    return Builder(
+      builder: (context) {
+        final colorScheme = Theme.of(context).colorScheme;
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.all(32),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 56,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                SizedBox(height: 24),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ),
-          SizedBox(height: 8),
-          Text(
-            subtitle,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[500],
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -246,13 +263,12 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Card(
       margin: EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadii.md),
         child: Padding(
           padding: EdgeInsets.all(16),
           child: Column(
@@ -297,11 +313,11 @@ class OrderCard extends StatelessWidget {
               // Informações do pedido
               Row(
                 children: [
-                  Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                  Icon(Icons.calendar_today, size: 16, color: colorScheme.onSurfaceVariant),
                   SizedBox(width: 8),
                   Text(
                     order.formattedOrderDate,
-                    style: TextStyle(color: Colors.grey[600]),
+                    style: TextStyle(color: colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -310,12 +326,12 @@ class OrderCard extends StatelessWidget {
 
               Row(
                 children: [
-                  Icon(Icons.delivery_dining, size: 16, color: Colors.grey[600]),
+                  Icon(Icons.delivery_dining, size: 16, color: colorScheme.onSurfaceVariant),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Entrega: ${order.formattedDeliveryDate}',
-                      style: TextStyle(color: Colors.grey[600]),
+                      style: TextStyle(color: colorScheme.onSurfaceVariant),
                     ),
                   ),
                 ],
@@ -345,7 +361,7 @@ class OrderCard extends StatelessWidget {
                 'Itens: ${order.items.map((item) => '${item.quantity}x ${item.product.name}').join(', ')}',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey[700],
+                  color: colorScheme.onSurfaceVariant,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -362,7 +378,7 @@ class OrderCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.brown[700],
+                      color: colorScheme.primary,
                     ),
                   ),
                   Row(
@@ -370,15 +386,15 @@ class OrderCard extends StatelessWidget {
                       Text(
                         'Ver detalhes',
                         style: TextStyle(
-                          color: Colors.brown[600],
-                          fontWeight: FontWeight.w500,
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       SizedBox(width: 4),
                       Icon(
                         Icons.arrow_forward_ios,
-                        size: 16,
-                        color: Colors.brown[600],
+                        size: 14,
+                        color: colorScheme.primary,
                       ),
                     ],
                   ),

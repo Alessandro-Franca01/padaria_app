@@ -37,7 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Você precisa aceitar os termos e condições'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -62,7 +62,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Falha no cadastro. Tente novamente mais tarde.'),
-          backgroundColor: Colors.red,
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     }
@@ -76,7 +76,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Cadastro'),
-        backgroundColor: Colors.brown[700],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -88,11 +87,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
               children: [
                 Text(
                   'Criar Conta',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.brown[800],
-                  ),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
                 SizedBox(height: 20),
                 TextFormField(
@@ -240,12 +237,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: RichText(
                         text: TextSpan(
                           text: 'Eu aceito os ',
-                          style: TextStyle(color: Colors.black54),
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                           children: [
                             TextSpan(
                               text: 'Termos e Condições',
                               style: TextStyle(
-                                color: Colors.brown[700],
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -256,23 +253,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ],
                 ),
                 SizedBox(height: 30),
-                ElevatedButton(
+                FilledButton(
                   onPressed: isLoading ? null : _submitForm,
                   child: isLoading
-                      ? CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ? SizedBox(
+                          height: 22,
+                          width: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
                         )
-                      : Text(
-                          'Cadastrar',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.brown[700],
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                      : Text('Cadastrar'),
                 ),
               ],
             ),

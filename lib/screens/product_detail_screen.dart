@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/product.dart';
 import '../services/cart_service.dart';
 import '../widgets/product_image.dart';
+import '../theme/app_theme.dart';
 import 'cart_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
@@ -20,10 +21,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.product.name),
-        backgroundColor: Colors.brown,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -33,9 +34,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             Container(
               height: 300,
               width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-              ),
+              color: colorScheme.surfaceContainerHighest,
               child: ProductImage(product: widget.product, iconSize: 100),
             ),
 
@@ -62,7 +61,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.brown[700],
+                          color: colorScheme.primary,
                         ),
                       ),
                     ],
@@ -74,14 +73,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: Colors.brown[100],
+                      color: colorScheme.secondaryContainer,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       widget.product.category,
                       style: TextStyle(
-                        color: Colors.brown[700],
-                        fontWeight: FontWeight.w500,
+                        color: colorScheme.onSecondaryContainer,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
@@ -101,7 +100,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     widget.product.description,
                     style: TextStyle(
                       fontSize: 16,
-                      color: Colors.grey[700],
+                      color: colorScheme.onSurfaceVariant,
                       height: 1.5,
                     ),
                   ),
@@ -119,23 +118,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   SizedBox(height: 8),
                   Row(
                     children: [
-                      IconButton(
+                      IconButton.filledTonal(
                         onPressed: quantity > 1 ? () {
                           setState(() {
                             quantity--;
                           });
                         } : null,
                         icon: Icon(Icons.remove),
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.grey[200],
-                        ),
                       ),
                       Container(
                         width: 60,
-                        height: 40,
+                        height: 44,
+                        margin: EdgeInsets.symmetric(horizontal: 8),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]!),
-                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: colorScheme.outlineVariant),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(
                           child: Text(
@@ -147,16 +144,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ),
                         ),
                       ),
-                      IconButton(
+                      IconButton.filled(
                         onPressed: () {
                           setState(() {
                             quantity++;
                           });
                         },
                         icon: Icon(Icons.add),
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.brown[200],
-                        ),
                       ),
                       Spacer(),
                       Text(
@@ -164,7 +158,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.brown[700],
+                          color: colorScheme.primary,
                         ),
                       ),
                     ],
@@ -195,113 +189,61 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   SizedBox(height: 32),
 
                   // Botão de adicionar ao carrinho
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: Consumer<CartService>(
-                      builder: (context, cartService, child) {
-                        return ElevatedButton.icon(
-                          onPressed: widget.product.isAvailable ? () {
-                            cartService.addItem(
-                              widget.product,
-                              quantity: quantity,
-                              notes: notesController.text.trim().isEmpty
-                                  ? null
-                                  : notesController.text.trim(),
-                            );
+                  Consumer<CartService>(
+                    builder: (context, cartService, child) {
+                      return FilledButton.icon(
+                        onPressed: widget.product.isAvailable ? () {
+                          cartService.addItem(
+                            widget.product,
+                            quantity: quantity,
+                            notes: notesController.text.trim().isEmpty
+                                ? null
+                                : notesController.text.trim(),
+                          );
 
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '${widget.product.name} adicionado ao carrinho (${quantity}x)',
-                                ),
-                                duration: Duration(seconds: 2),
-                                backgroundColor: Colors.green,
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                '${widget.product.name} adicionado ao carrinho (${quantity}x)',
                               ),
-                            );
-
-                            Navigator.pop(context);
-                          } : null,
-                          icon: Icon(Icons.add_shopping_cart),
-                          label: Text(
-                            widget.product.isAvailable
-                                ? 'Adicionar ao Carrinho'
-                                : 'Produto Indisponível',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: widget.product.isAvailable
-                                ? Colors.brown[700]
-                                : Colors.grey,
-                            foregroundColor: Colors.white, // texto com contraste melhor
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              duration: Duration(seconds: 2),
+                              backgroundColor: AppColors.success,
                             ),
-                          ),
-                        );
-                      },
-                    ),
+                          );
+
+                          Navigator.pop(context);
+                        } : null,
+                        icon: Icon(Icons.add_shopping_cart),
+                        label: Text(
+                          widget.product.isAvailable
+                              ? 'Adicionar ao Carrinho'
+                              : 'Produto Indisponível',
+                        ),
+                      );
+                    },
                   ),
 
-                  SizedBox(height: 16),
+                  SizedBox(height: 12),
 
                   // Botão de ver carrinho
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: Consumer<CartService>(
-                      builder: (context, cartService, child) {
-                        return OutlinedButton.icon(
-                          onPressed: () {
-                            // Navegar para o carrinho (usa rota explícita com MaterialPageRoute)
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => CartScreen()),
-                            );
-                          },
-                          icon: Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              Icon(Icons.shopping_cart),
-                              if (cartService.itemCount > 0)
-                                Positioned(
-                                  right: -6,
-                                  top: -6,
-                                  child: Container(
-                                    padding: EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    constraints: BoxConstraints(minWidth: 18, minHeight: 18),
-                                    child: Center(
-                                      child: Text(
-                                        '${cartService.itemCount}',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          label: Text(
-                            'Ver Carrinho (${cartService.itemCount})',
-                            style: TextStyle(fontSize: 16, color: Colors.brown.shade900),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.brown.shade900,
-                            side: BorderSide(color: Colors.brown[700]!),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                  Consumer<CartService>(
+                    builder: (context, cartService, child) {
+                      return OutlinedButton.icon(
+                        onPressed: () {
+                          // Navegar para o carrinho (usa rota explícita com MaterialPageRoute)
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => CartScreen()),
+                          );
+                        },
+                        icon: Badge(
+                          isLabelVisible: cartService.itemCount > 0,
+                          label: Text('${cartService.itemCount}'),
+                          child: Icon(Icons.shopping_cart_outlined),
+                        ),
+                        label: Text('Ver Carrinho (${cartService.itemCount})'),
+                      );
+                    },
                   ),
                 ],
               ),

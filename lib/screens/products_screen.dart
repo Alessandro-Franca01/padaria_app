@@ -4,6 +4,7 @@ import '../models/product.dart';
 import '../services/product_service.dart';
 import '../services/cart_service.dart';
 import '../widgets/product_image.dart';
+import '../theme/app_theme.dart';
 import 'product_detail_screen.dart';
 
 class ProductsScreen extends StatefulWidget {
@@ -32,7 +33,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Produtos'),
-        backgroundColor: Colors.brown,
         actions: [
           IconButton(
             icon: Icon(Icons.search),
@@ -86,7 +86,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
                               selectedCategory = null;
                             });
                           },
-                          selectedColor: Colors.brown[300],
                         ),
                       );
                     }
@@ -102,7 +101,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             selectedCategory = selected ? category : null;
                           });
                         },
-                        selectedColor: Colors.brown[300],
                       ),
                     );
                   },
@@ -141,6 +139,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -151,8 +150,6 @@ class ProductCard extends StatelessWidget {
         );
       },
       child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -160,13 +157,10 @@ class ProductCard extends StatelessWidget {
               flex: 5,
               child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                  color: Colors.grey[200],
-                ),
+                color: colorScheme.surfaceContainerHighest,
                 child: ProductImage(
                   product: product,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.md)),
                 ),
               ),
             ),
@@ -192,7 +186,7 @@ class ProductCard extends StatelessWidget {
                       product.description,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey[600],
+                        color: colorScheme.onSurfaceVariant,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -207,7 +201,7 @@ class ProductCard extends StatelessWidget {
                             'R\$ ${product.price.toStringAsFixed(2)}',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.brown[700],
+                              color: colorScheme.primary,
                               fontSize: 15,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -217,7 +211,10 @@ class ProductCard extends StatelessWidget {
                         Consumer<CartService>(
                           builder: (context, cartService, child) {
                             return Material(
-                              color: Colors.transparent,
+                              color: product.isAvailable
+                                  ? colorScheme.primaryContainer
+                                  : colorScheme.surfaceContainerHighest,
+                              borderRadius: BorderRadius.circular(10),
                               child: InkWell(
                                 onTap: product.isAvailable ? () {
                                   cartService.addItem(product);
@@ -225,16 +222,18 @@ class ProductCard extends StatelessWidget {
                                     SnackBar(
                                       content: Text('${product.name} adicionado ao carrinho'),
                                       duration: Duration(seconds: 2),
-                                      backgroundColor: Colors.green,
+                                      backgroundColor: AppColors.success,
                                     ),
                                   );
                                 } : null,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(10),
                                 child: Padding(
-                                  padding: EdgeInsets.all(4),
+                                  padding: EdgeInsets.all(7),
                                   child: Icon(
                                     Icons.add_shopping_cart,
-                                    color: product.isAvailable ? Colors.brown : Colors.grey,
+                                    color: product.isAvailable
+                                        ? colorScheme.onPrimaryContainer
+                                        : colorScheme.onSurfaceVariant,
                                     size: 20,
                                   ),
                                 ),
@@ -319,9 +318,9 @@ class ProductSearchDelegate extends SearchDelegate<String> {
                 height: 50,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey[200],
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 ),
-                child: Icon(Icons.fastfood, color: Colors.brown),
+                child: Icon(Icons.fastfood, color: Theme.of(context).colorScheme.primary),
               ),
               title: Text(product.name),
               subtitle: Text('R\$ ${product.price.toStringAsFixed(2)}'),

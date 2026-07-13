@@ -8,6 +8,7 @@ import '../services/cart_service.dart';
 import '../services/order_service.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
+import '../theme/app_theme.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -61,12 +62,11 @@ class _SplashScreenState extends State<SplashScreen> {
         height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
             colors: [
-              Colors.brown[800]!,
-              Colors.brown[600]!,
-              Colors.brown[400]!,
+              AppColors.seed,
+              const Color(0xFF7C3F14),
             ],
           ),
         ),
@@ -82,15 +82,15 @@ class _SplashScreenState extends State<SplashScreen> {
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black26,
-                    blurRadius: 10,
-                    offset: Offset(0, 5),
+                    blurRadius: 16,
+                    offset: Offset(0, 6),
                   ),
                 ],
               ),
               child: Icon(
                 Icons.bakery_dining,
-                size: 80,
-                color: Colors.brown[700],
+                size: 72,
+                color: AppColors.seed,
               ),
             ),
             SizedBox(height: 30),
@@ -107,7 +107,7 @@ class _SplashScreenState extends State<SplashScreen> {
               'Seu pão fresquinho na palma da mão',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white70,
+                color: Colors.white.withOpacity(0.85),
               ),
             ),
             SizedBox(height: 50),

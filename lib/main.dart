@@ -6,6 +6,8 @@ import 'services/api_client.dart';
 import 'services/auth_service.dart';
 import 'services/cart_service.dart';
 import 'services/product_service.dart';
+import 'services/category_service.dart';
+import 'services/discount_service.dart';
 import 'services/loyalty_service.dart';
 import 'services/order_service.dart';
 import 'services/chat_service.dart';
@@ -37,6 +39,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: _authService),
         ChangeNotifierProvider(create: (_) => CartService()),
         ChangeNotifierProvider(create: (_) => ProductService()),
+        ChangeNotifierProvider(create: (_) => CategoryService()),
+        ChangeNotifierProvider(create: (_) => DiscountService()),
         ChangeNotifierProvider(create: (_) => LoyaltyService()),
         ChangeNotifierProvider(create: (_) => OrderService()),
         ChangeNotifierProvider(create: (_) => ChatService()),

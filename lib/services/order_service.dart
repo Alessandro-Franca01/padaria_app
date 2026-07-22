@@ -71,7 +71,7 @@ class OrderService with ChangeNotifier {
         name: itemJson['productName'],
         description: '',
         price: (itemJson['unitPrice'] as num).toDouble(),
-        imageUrl: 'assets/images/paes_artesanais.jpeg',
+        imageUrl: itemJson['imageUrl'] ?? '',
         category: '',
       );
       return CartItem(

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
-import 'package:padaria_app/models/category_item.dart';
-import 'package:padaria_app/models/discount_item.dart';
+import '../models/discount.dart';
 import '../services/cart_service.dart';
+import '../services/category_service.dart';
+import '../services/discount_service.dart';
 import '../services/order_service.dart';
-import '../widgets/carousel_item.dart';
+import '../services/product_service.dart';
+import '../widgets/product_image.dart';
+import '../widgets/remote_or_asset_image.dart';
 import 'products_screen.dart';
+import 'product_detail_screen.dart';
 import 'cart_screen.dart';
 import 'orders_screen.dart';
 import 'package:padaria_app/models/order.dart';
@@ -41,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildDiscountItem(DiscountItem discount) {
+  Widget _buildDiscountItem(Discount discount) {
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -61,11 +65,10 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    discount.imagePath,
+                  child: SizedBox(
                     height: 60,
                     width: double.infinity,
-                    fit: BoxFit.cover,
+                    child: RemoteOrAssetImage(path: discount.imagePath),
                   ),
                 ),
                 SizedBox(height: 6),
@@ -209,62 +212,67 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Seção Destaques
                 _sectionTitle(context, 'Destaques'),
                 SizedBox(height: 12),
-                CarouselSlider.builder(
-                  itemCount: carouselItems.length,
-                  options: CarouselOptions(
-                    autoPlay: true,
-                    aspectRatio: 2.0,
-                    enlargeCenterPage: true,
-                    viewportFraction: 0.9,
-                  ),
-                  itemBuilder: (context, index, realIndex) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProductsScreen(),
+                Consumer<ProductService>(
+                  builder: (context, productService, child) {
+                    final featured = productService.featuredProducts;
+                    if (featured.isEmpty) return SizedBox.shrink();
+
+                    return CarouselSlider.builder(
+                      itemCount: featured.length,
+                      options: CarouselOptions(
+                        autoPlay: true,
+                        aspectRatio: 2.0,
+                        enlargeCenterPage: true,
+                        viewportFraction: 0.9,
+                      ),
+                      itemBuilder: (context, index, realIndex) {
+                        final product = featured[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductDetailScreen(product: product),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                ProductImage(product: product),
+                                // Gradiente para legibilidade do texto sobre a imagem
+                                DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black.withOpacity(0.65),
+                                      ],
+                                      stops: const [0.45, 1.0],
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 14,
+                                  right: 14,
+                                  bottom: 12,
+                                  child: Text(
+                                    product.name,
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
-                      child: Card(
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Image.asset(
-                              carouselItems[index].imagePath,
-                              fit: BoxFit.cover,
-                            ),
-                            // Gradiente para legibilidade do texto sobre a imagem
-                            DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.transparent,
-                                    Colors.black.withOpacity(0.65),
-                                  ],
-                                  stops: const [0.45, 1.0],
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              left: 14,
-                              right: 14,
-                              bottom: 12,
-                              child: Text(
-                                carouselItems[index].title,
-                                style: const TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     );
                   },
                 ),
@@ -274,29 +282,36 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Seção Promoções
                 _sectionTitle(context, 'Promoções e Descontos'),
                 SizedBox(height: 12),
-                SizedBox(
-                  height: 150,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: (DiscountItems.length / 3).ceil(),
-                    itemBuilder: (context, index) {
-                      return Container(
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        margin: EdgeInsets.only(right: 12),
-                        child: Row(
-                          children: [
-                            _buildDiscountItem(DiscountItems[index * 3]),
-                            SizedBox(width: 12),
-                            if (index * 3 + 1 < DiscountItems.length)
-                              _buildDiscountItem(DiscountItems[index * 3 + 1]),
-                            SizedBox(width: 12),
-                            if (index * 3 + 2 < DiscountItems.length)
-                              _buildDiscountItem(DiscountItems[index * 3 + 2]),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                Consumer<DiscountService>(
+                  builder: (context, discountService, child) {
+                    final discounts = discountService.discounts;
+                    if (discounts.isEmpty) return SizedBox.shrink();
+
+                    return SizedBox(
+                      height: 150,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: (discounts.length / 3).ceil(),
+                        itemBuilder: (context, index) {
+                          return Container(
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            margin: EdgeInsets.only(right: 12),
+                            child: Row(
+                              children: [
+                                _buildDiscountItem(discounts[index * 3]),
+                                SizedBox(width: 12),
+                                if (index * 3 + 1 < discounts.length)
+                                  _buildDiscountItem(discounts[index * 3 + 1]),
+                                SizedBox(width: 12),
+                                if (index * 3 + 2 < discounts.length)
+                                  _buildDiscountItem(discounts[index * 3 + 2]),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
                 ),
 
                 SizedBox(height: 28),
@@ -304,55 +319,59 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Seção Categorias
                 _sectionTitle(context, 'Nossas Especialidades'),
                 SizedBox(height: 12),
-                GridView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 0.8,
-                  ),
-                  itemCount: categories.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProductsScreen(
-                              category: categories[index].category,
+                Consumer<CategoryService>(
+                  builder: (context, categoryService, child) {
+                    final categories = categoryService.categories;
+                    if (categories.isEmpty) return SizedBox.shrink();
+
+                    return GridView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        childAspectRatio: 0.8,
+                      ),
+                      itemCount: categories.length,
+                      itemBuilder: (context, index) {
+                        final category = categories[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductsScreen(
+                                  category: category.name,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.md)),
+                                    child: RemoteOrAssetImage(path: category.imagePath),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Text(
+                                    category.title ?? category.name,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         );
                       },
-                      child: Card(
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.md)),
-                                child: Image.asset(
-                                  categories[index].imagePath,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Text(
-                                categories[index].title,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     );
                   },
                 ),

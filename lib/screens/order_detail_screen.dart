@@ -5,6 +5,7 @@ import '../services/order_service.dart';
 import '../services/auth_service.dart';
 import '../services/api_client.dart';
 import '../theme/app_theme.dart';
+import '../widgets/product_image.dart';
 
 class OrderDetailScreen extends StatelessWidget {
   final Order order;
@@ -177,17 +178,10 @@ class OrderDetailScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       color: colorScheme.surfaceContainerHighest,
                     ),
-                    child: item.product.imageUrl.startsWith('assets/')
-                        ? ClipRRect(
+                    child: ProductImage(
+                      product: item.product,
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        item.product.imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            Icon(Icons.image_not_supported),
-                      ),
-                    )
-                        : Icon(Icons.fastfood, color: colorScheme.primary),
+                    ),
                   ),
                   SizedBox(width: 12),
                   // Informações do item

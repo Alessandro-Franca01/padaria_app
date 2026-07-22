@@ -4,6 +4,7 @@ import '../models/cart_item.dart';
 import '../services/cart_service.dart';
 import '../services/auth_service.dart';
 import '../theme/app_theme.dart';
+import '../widgets/product_image.dart';
 import 'checkout_screen.dart';
 import 'products_screen.dart';
 
@@ -303,17 +304,10 @@ class _CartItemCardState extends State<CartItemCard> {
                     borderRadius: BorderRadius.circular(10),
                     color: colorScheme.surfaceContainerHighest,
                   ),
-                  child: widget.cartItem.product.imageUrl.startsWith('assets/')
-                      ? ClipRRect(
+                  child: ProductImage(
+                    product: widget.cartItem.product,
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      widget.cartItem.product.imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Icon(Icons.image_not_supported),
-                    ),
-                  )
-                      : Icon(Icons.fastfood, color: colorScheme.primary),
+                  ),
                 ),
 
                 SizedBox(width: 12),

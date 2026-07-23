@@ -43,11 +43,9 @@ class _PlansScreenState extends State<PlansScreen> {
       final editingPlan = widget.editingPlan;
       final wantedTemplateId = editingPlan?.templateId ?? widget.initialTemplateId;
 
-      if (wantedTemplateId != null) {
-        final template = subscriptionService.templates.firstWhere(
-          (t) => t.id == wantedTemplateId,
-          orElse: () => subscriptionService.templates.first,
-        );
+      if (wantedTemplateId != null && subscriptionService.templates.isNotEmpty) {
+        final matching = subscriptionService.templates.where((t) => t.id == wantedTemplateId);
+        final template = matching.isNotEmpty ? matching.first : subscriptionService.templates.first;
         setState(() => _selectedTemplate = template);
       }
 
@@ -117,7 +115,9 @@ class _PlansScreenState extends State<PlansScreen> {
     return _selectedQuantities.entries
         .where((e) => e.value > 0)
         .map((e) {
-          final product = products.firstWhere((p) => p.productId == e.key);
+          final matches = products.where((p) => p.productId == e.key);
+          if (matches.isEmpty) return null;
+          final product = matches.first;
           return CartItem(
             product: Product(
               id: product.productId,
@@ -130,6 +130,7 @@ class _PlansScreenState extends State<PlansScreen> {
             quantity: e.value,
           );
         })
+        .whereType<CartItem>()
         .toList();
   }
 
@@ -413,6 +414,7 @@ class _PlansScreenState extends State<PlansScreen> {
                       onPressed: _pickTime,
                       icon: Icon(Icons.access_time),
                       label: Text('Escolher'),
+                      style: FilledButton.styleFrom(minimumSize: Size(0, 52)),
                     ),
                   ],
                 ),

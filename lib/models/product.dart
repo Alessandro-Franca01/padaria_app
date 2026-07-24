@@ -7,7 +7,9 @@ class Product {
   final String category;
   final bool isAvailable;
   final bool isFeatured;
-  
+  final double? discountedPrice;
+  final double? discountPercentage;
+
   Product({
     required this.id,
     required this.name,
@@ -17,8 +19,13 @@ class Product {
     required this.category,
     this.isAvailable = true,
     this.isFeatured = false,
+    this.discountedPrice,
+    this.discountPercentage,
   });
-  
+
+  double get effectivePrice => discountedPrice ?? price;
+  bool get hasDiscount => discountedPrice != null;
+
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       id: json['id'],
@@ -29,9 +36,11 @@ class Product {
       category: json['category'],
       isAvailable: json['isAvailable'] ?? true,
       isFeatured: json['isFeatured'] ?? false,
+      discountedPrice: (json['discountedPrice'] as num?)?.toDouble(),
+      discountPercentage: (json['discountPercentage'] as num?)?.toDouble(),
     );
   }
-  
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -42,6 +51,8 @@ class Product {
       'category': category,
       'isAvailable': isAvailable,
       'isFeatured': isFeatured,
+      'discountedPrice': discountedPrice,
+      'discountPercentage': discountPercentage,
     };
   }
 }

@@ -11,7 +11,7 @@ class CartItem {
     this.notes,
   });
   
-  double get totalPrice => product.price * quantity;
+  double get totalPrice => product.effectivePrice * quantity;
   
   factory CartItem.fromJson(Map<String, dynamic> json, Product product) {
     return CartItem(

@@ -56,13 +56,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           ),
                         ),
                       ),
-                      Text(
-                        'R\$ ${widget.product.price.toStringAsFixed(2)}',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.primary,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          if (widget.product.hasDiscount)
+                            Text(
+                              'R\$ ${widget.product.price.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                decoration: TextDecoration.lineThrough,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          Text(
+                            'R\$ ${widget.product.effectivePrice.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.primary,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -154,7 +168,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                       Spacer(),
                       Text(
-                        'Total: R\$ ${(widget.product.price * quantity).toStringAsFixed(2)}',
+                        'Total: R\$ ${(widget.product.effectivePrice * quantity).toStringAsFixed(2)}',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

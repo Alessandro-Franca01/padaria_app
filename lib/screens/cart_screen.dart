@@ -326,7 +326,7 @@ class _CartItemCardState extends State<CartItemCard> {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'R\$ ${widget.cartItem.product.price.toStringAsFixed(
+                        'R\$ ${widget.cartItem.product.effectivePrice.toStringAsFixed(
                             2)} cada',
                         style: TextStyle(
                           color: colorScheme.onSurfaceVariant,

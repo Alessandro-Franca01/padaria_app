@@ -9,6 +9,7 @@ import '../services/order_service.dart';
 import '../services/product_service.dart';
 import '../widgets/product_image.dart';
 import '../widgets/remote_or_asset_image.dart';
+import '../widgets/discount_navigation.dart';
 import 'products_screen.dart';
 import 'product_detail_screen.dart';
 import 'cart_screen.dart';
@@ -17,6 +18,7 @@ import 'package:padaria_app/models/order.dart';
 import 'chat_screen.dart';
 import 'profile_screen.dart';
 import 'subscription_plans_list_screen.dart';
+import 'discounts_screen.dart';
 import '../theme/app_theme.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -48,15 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildDiscountItem(Discount discount) {
     return Expanded(
       child: GestureDetector(
-        onTap: () {
-          // Navegar para produtos com desconto
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProductsScreen(),
-            ),
-          );
-        },
+        onTap: () => navigateToDiscountTarget(context, discount),
         child: Card(
           child: Padding(
             padding: EdgeInsets.all(8),
@@ -280,7 +274,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(height: 28),
 
                 // Seção Promoções
-                _sectionTitle(context, 'Promoções e Descontos'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _sectionTitle(context, 'Promoções e Descontos'),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const DiscountsScreen()),
+                        );
+                      },
+                      child: Text('Ver todos'),
+                    ),
+                  ],
+                ),
                 SizedBox(height: 12),
                 Consumer<DiscountService>(
                   builder: (context, discountService, child) {

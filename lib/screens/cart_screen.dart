@@ -370,17 +370,18 @@ class _CartItemCardState extends State<CartItemCard> {
                             constraints: BoxConstraints.tightFor(width: 36, height: 36),
                             padding: EdgeInsets.zero,
                           ),
-                          Spacer(),
-                          Text(
-                            'R\$ ${widget.cartItem.totalPrice.toStringAsFixed(
-                                2)}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: colorScheme.primary,
-                            ),
-                          ),
                         ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'R\$ ${widget.cartItem.totalPrice.toStringAsFixed(
+                            2)}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.primary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

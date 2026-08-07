@@ -535,6 +535,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       _selectedDeliveryTime!.minute,
     );
 
+    if (!deliveryDateTime.isAfter(DateTime.now())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Selecione uma data e hora de entrega futuras'),
+          backgroundColor: AppColors.warning,
+        ),
+      );
+      return;
+    }
+
     // Estimativa só para exibição — os pontos de verdade são creditados pelo servidor ao criar o pedido.
     final pointsEarned = (cartService.totalAmount / 5).round();
 

@@ -22,7 +22,11 @@ class Order {
   final String? paymentMethod;
   final bool isRecurring;
   final List<String>? recurringDays;
-  
+  final String? loyaltyBenefitName;
+  final int? loyaltyPointsSpent;
+  final double? loyaltyDiscount;
+  final int? loyaltyPointsEarned;
+
   Order({
     required this.id,
     required this.userId,
@@ -35,6 +39,10 @@ class Order {
     this.paymentMethod,
     this.isRecurring = false,
     this.recurringDays,
+    this.loyaltyBenefitName,
+    this.loyaltyPointsSpent,
+    this.loyaltyDiscount,
+    this.loyaltyPointsEarned,
   });
   
   String get formattedOrderDate => DateFormat('dd/MM/yyyy HH:mm').format(orderDate);
@@ -68,12 +76,16 @@ class Order {
           : OrderStatus.pending,
       paymentMethod: json['paymentMethod'],
       isRecurring: json['isRecurring'] ?? false,
-      recurringDays: json['recurringDays'] != null 
-          ? List<String>.from(json['recurringDays']) 
+      recurringDays: json['recurringDays'] != null
+          ? List<String>.from(json['recurringDays'])
           : null,
+      loyaltyBenefitName: json['loyaltyBenefitName'],
+      loyaltyPointsSpent: json['loyaltyPointsSpent'],
+      loyaltyDiscount: json['loyaltyDiscount'] != null ? (json['loyaltyDiscount'] as num).toDouble() : null,
+      loyaltyPointsEarned: json['loyaltyPointsEarned'],
     );
   }
-  
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -87,6 +99,10 @@ class Order {
       'paymentMethod': paymentMethod,
       'isRecurring': isRecurring,
       'recurringDays': recurringDays,
+      'loyaltyBenefitName': loyaltyBenefitName,
+      'loyaltyPointsSpent': loyaltyPointsSpent,
+      'loyaltyDiscount': loyaltyDiscount,
+      'loyaltyPointsEarned': loyaltyPointsEarned,
     };
   }
 }

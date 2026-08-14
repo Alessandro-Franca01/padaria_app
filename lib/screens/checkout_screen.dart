@@ -389,6 +389,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Widget _buildLoyaltyProgram(LoyaltyService loyaltyService, double totalAmount) {
+    final availableBenefits = loyaltyService.benefits.where((b) => b.active).toList();
+
     return Card(
       child: Padding(
         padding: EdgeInsets.all(16),
@@ -412,12 +414,43 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             Text('Pontos disponíveis: ${loyaltyService.points}'),
             SizedBox(height: 8),
             Text(
-              'Com esta compra você ganhará: ${(totalAmount / 5).round()} pontos',
+              'Ao concluir este pedido você ganhará aproximadamente ${(totalAmount / 5).round()} pontos',
               style: TextStyle(
                 color: AppColors.success,
                 fontWeight: FontWeight.w600,
               ),
             ),
+            if (availableBenefits.isNotEmpty) ...[
+              SizedBox(height: 16),
+              Text(
+                'Usar um benefício neste pedido:',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              SizedBox(height: 4),
+              RadioListTile<String?>(
+                title: Text('Não usar benefício'),
+                value: null,
+                groupValue: loyaltyService.selectedBenefitId,
+                onChanged: (value) => loyaltyService.selectBenefit(value),
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+              ),
+              ...availableBenefits.map((benefit) {
+                return RadioListTile<String?>(
+                  title: Text(benefit.name),
+                  subtitle: Text(
+                    benefit.available
+                        ? '${benefit.effectSummary} · ${benefit.requiredPoints} pontos'
+                        : '${benefit.effectSummary} · faltam ${benefit.requiredPoints - loyaltyService.points} pontos',
+                  ),
+                  value: benefit.id,
+                  groupValue: loyaltyService.selectedBenefitId,
+                  onChanged: benefit.available ? (value) => loyaltyService.selectBenefit(value) : null,
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                );
+              }),
+            ],
           ],
         ),
       ),
@@ -557,9 +590,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         paymentMethod: _paymentMethodLabels[_selectedPaymentMethod],
         isRecurring: _isRecurring,
         recurringDays: _isRecurring ? _selectedRecurringDays : null,
+        loyaltyBenefitId: loyaltyService.selectedBenefitId,
       );
 
       cartService.clear();
+      loyaltyService.clearSelection();
+      loyaltyService.fetchStatus();
 
       Navigator.pushReplacement(
         context,

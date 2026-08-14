@@ -85,7 +85,45 @@ class OrderConfirmationScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 24),
-                    // Pontos de fidelidade ganhos
+                    // Benefício de fidelidade aplicado neste pedido
+                    if (order.loyaltyBenefitName != null) ...[
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.amber[50],
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.amber[200]!),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.card_giftcard, color: Colors.amber[700], size: 32),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Benefício aplicado',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: Colors.amber[800],
+                                    ),
+                                  ),
+                                  Text(
+                                    '${order.loyaltyBenefitName} (${order.loyaltyPointsSpent} pontos usados)',
+                                    style: TextStyle(color: Colors.amber[700]),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 12),
+                    ],
+                    // Pontos de fidelidade estimados
                     if (pointsEarned > 0)
                       Container(
                         width: double.infinity,
@@ -116,7 +154,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    'Você ganhou $pointsEarned pontos de fidelidade!',
+                                    'Você ganhará aproximadamente $pointsEarned pontos de fidelidade quando este pedido for concluído!',
                                     style: TextStyle(
                                       color: Colors.amber[700],
                                     ),

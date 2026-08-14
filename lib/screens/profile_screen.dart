@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/user.dart';
 import '../services/auth_service.dart';
 import 'login_screen.dart';
+import 'loyalty_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -128,12 +129,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                               ),
                               SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Icon(Icons.loyalty, color: Colors.amber[700], size: 20),
-                                  SizedBox(width: 8),
-                                  Text('${user.loyaltyPoints} pontos de fidelidade'),
-                                ],
+                              InkWell(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => LoyaltyScreen()),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.loyalty, color: Colors.amber[700], size: 20),
+                                    SizedBox(width: 8),
+                                    Text('${user.loyaltyPoints} pontos de fidelidade'),
+                                    SizedBox(width: 4),
+                                    Icon(Icons.chevron_right, size: 18, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                  ],
+                                ),
                               ),
                             ],
                           ),

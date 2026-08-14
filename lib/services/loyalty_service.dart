@@ -1,14 +1,28 @@
 import 'package:flutter/material.dart';
+import '../models/loyalty_benefit.dart';
+import '../models/loyalty_transaction.dart';
 import 'api_client.dart';
 
 class LoyaltyService with ChangeNotifier {
   int _points = 0;
-  List<Map<String, dynamic>> _benefits = [];
+  List<LoyaltyBenefit> _benefits = [];
+  List<LoyaltyTransaction> _transactions = [];
   bool _isLoading = false;
+  String? _selectedBenefitId;
 
   int get points => _points;
-  List<Map<String, dynamic>> get benefits => _benefits;
+  List<LoyaltyBenefit> get benefits => _benefits;
+  List<LoyaltyTransaction> get transactions => _transactions;
   bool get isLoading => _isLoading;
+  String? get selectedBenefitId => _selectedBenefitId;
+
+  LoyaltyBenefit? get selectedBenefit {
+    if (_selectedBenefitId == null) return null;
+    for (final benefit in _benefits) {
+      if (benefit.id == _selectedBenefitId) return benefit;
+    }
+    return null;
+  }
 
   Future<void> fetchStatus() async {
     _isLoading = true;
@@ -17,7 +31,10 @@ class LoyaltyService with ChangeNotifier {
     try {
       final data = await ApiClient.get('/loyalty');
       _points = data['points'];
-      _benefits = List<Map<String, dynamic>>.from(data['benefits']);
+      _benefits = (data['benefits'] as List).map((json) => LoyaltyBenefit.fromJson(json)).toList();
+      if (_selectedBenefitId != null && selectedBenefit == null) {
+        _selectedBenefitId = null;
+      }
     } catch (e) {
       // mantém o estado anterior em caso de falha
     }
@@ -26,15 +43,23 @@ class LoyaltyService with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> redeem(String benefitCode) async {
+  Future<void> fetchTransactions() async {
     try {
-      final data = await ApiClient.post('/loyalty/redeem', body: {'benefit': benefitCode});
-      _points = data['points'];
-      _benefits = List<Map<String, dynamic>>.from(data['benefits']);
+      final data = await ApiClient.get('/loyalty/transactions') as List;
+      _transactions = data.map((json) => LoyaltyTransaction.fromJson(json)).toList();
       notifyListeners();
-      return true;
     } catch (e) {
-      return false;
+      // mantém o estado anterior em caso de falha
     }
+  }
+
+  void selectBenefit(String? benefitId) {
+    _selectedBenefitId = benefitId;
+    notifyListeners();
+  }
+
+  void clearSelection() {
+    _selectedBenefitId = null;
+    notifyListeners();
   }
 }

@@ -34,6 +34,7 @@ class OrderService with ChangeNotifier {
     String? paymentMethod,
     bool isRecurring = false,
     List<String>? recurringDays,
+    String? loyaltyBenefitId,
   }) async {
     final body = {
       'items': items.map((item) => {
@@ -46,6 +47,7 @@ class OrderService with ChangeNotifier {
       'paymentMethod': paymentMethod,
       'isRecurring': isRecurring,
       'recurringDays': isRecurring ? (recurringDays ?? []) : <String>[],
+      'loyaltyBenefitId': loyaltyBenefitId,
     };
 
     final data = await ApiClient.post('/orders', body: body);
